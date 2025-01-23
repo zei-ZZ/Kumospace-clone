@@ -1,1 +1,18 @@
 /* You can add global styles to this file, and also import other style files */
+:root {
+    --pixel-size: 2px;
+    --grid-cell: calc( var(--pixel-size) * 16);
+    --bg: #92DB7B;
+ }
+
+ @media( min-width: 700px ) {
+    :root {
+       --pixel-size: 3px;
+    }
+ }
+ 
+ @media( min-width: 1000px ) {
+    :root {
+       --pixel-size: 4px;
+    }
+ }

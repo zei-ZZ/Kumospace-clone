@@ -1,0 +1,60 @@
+:host {
+    height: 100%;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.camera {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    border: 2px solid black;
+}
+
+.map {
+    image-rendering: pixelated;
+    background-image: url("../../assets/office.png");
+    background-size: cover;
+    width: 180vw;
+    height: 180vh;
+    position: relative;
+    border: 2px solid yellow;
+}
+
+.character {
+    width: 10vw;
+    height: 10vw;
+    position: absolute;
+    overflow:hidden;
+    background-color: red;
+}
+
+/* Medium screens (e.g., tablets) */
+@media (min-width: 700px) {
+    .map {
+        width: 150vw;
+        height: 150vh;
+    }
+    .character {
+        width: 8vw;
+        height: 8vw;
+    }
+}
+
+/* Large screens (e.g., desktops) */
+@media (min-width: 1000px) {
+    .map {
+        width: 120vw;
+        height: 120vh;
+    }
+    .character {
+        width: 5vw;
+        height: 5vw;
+    }
+}
+
+
+
