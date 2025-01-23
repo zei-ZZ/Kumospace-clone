@@ -8,6 +8,7 @@ import { UserModule } from './user/user.module';
 import 'dotenv/config';
 import { User } from './user/user.entity';
 import { Space } from './space/space.entity';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -28,6 +29,6 @@ import { Space } from './space/space.entity';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}
