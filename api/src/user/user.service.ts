@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   HttpStatus,
@@ -10,12 +12,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserSubscribeDto } from './user.subscribe.dto';
 import { LoginCredentialsDto } from './user.login.dto';
+import { extname } from 'path';
+import { createReadStream, createWriteStream } from 'fs';
 
 @Injectable()
 export class UserService {
@@ -89,5 +93,35 @@ export class UserService {
 
   async findByEmail(email: string) {
     return this.userRepository.findOneBy({ email: email });
+  }
+
+  async uploadFile(
+    file: Express.Multer.File,
+    destination: string,
+  ): Promise<string> {
+    if (!file) {
+      throw new BadRequestException('Aucun fichier trouvé');
+    }
+    const fileName = `${Date.now()}${extname(file.originalname)}`;
+    const uploadPath = `public/uploads/${destination}/${fileName}`;
+    const reader = createReadStream(file.path);
+    const writer = createWriteStream(uploadPath);
+    await new Promise((resolve, reject) => {
+      reader.pipe(writer);
+      writer.on('finish', resolve);
+      writer.on('error', reject);
+    });
+    return fileName;
+  }
+
+  async update(id: string, updateDto: DeepPartial<User>): Promise<User> {
+    const entity = await this.userRepository.preload({
+      id,
+      ...updateDto,
+    });
+    if (!entity) {
+      throw new NotFoundException('entity Not Found');
+    }
+    return this.userRepository.save(entity);
   }
 }
