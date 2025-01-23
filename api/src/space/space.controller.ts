@@ -11,7 +11,7 @@ export class SpaceController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() space : Space, @User() user: UserEntity) {
-    //return this.spaceService.createSpace(space, user.id);
+  create(@Body() space: Space, @User() user: UserEntity) {
+    return this.spaceService.createSpace(space, user.id);
   }
 }

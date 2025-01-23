@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SpaceModule } from './space/space.module';
 import { UserModule } from './user/user.module';
 import 'dotenv/config';
+import { User } from './user/user.entity';
+import { Space } from './space/space.entity';
 
 @Module({
   imports: [
@@ -19,6 +21,7 @@ import 'dotenv/config';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
+      entities: [User, Space],
       synchronize: true,
     }),
     SpaceModule,
