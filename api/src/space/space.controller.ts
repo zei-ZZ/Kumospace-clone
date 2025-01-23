@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Body,
   Controller,
@@ -11,10 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SpaceService } from './space.service';
-import { Space } from './space.entity';
 import { JwtAuthGuard } from 'src/common/jwt-auth.guard';
-import { User } from '../user/user.decorator';
-import { User as UserEntity } from '../user/user.entity';
+import { SpaceDto } from './space.dto';
 
 @Controller('space')
 export class SpaceController {
@@ -22,8 +19,9 @@ export class SpaceController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() space: Space, @User() user: UserEntity) {
-    return this.spaceService.createSpace(space, user.id);
+  create(@Body() body: { space: SpaceDto; userId: string }) {
+    const { space, userId } = body;
+    return this.spaceService.createSpace(space, userId);
   }
 
   @Get(':id')
@@ -38,12 +36,13 @@ export class SpaceController {
 
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  async remove(@Param('id') id: string, @User() user) {
+  async remove(@Param('id') id: string, @Body() body: { userId: string }) {
+    const { userId } = body;
     const meal = await this.spaceService.findOne(id);
     if (!meal) {
       throw new NotFoundException('Meal not found');
     }
-    if (user.id !== meal.user.id) {
+    if (userId !== meal.user.id) {
       throw new UnauthorizedException(
         'Unauthorized: User does not have permission to delete this meal',
       );

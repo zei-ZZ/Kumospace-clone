@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Space } from './space.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
+import { SpaceDto } from './space.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class SpaceService {
@@ -14,12 +16,13 @@ export class SpaceService {
     private userRepository: Repository<User>,
   ) {}
 
-  async createSpace(entity: Space, userid): Promise<Space> {
+  async createSpace(entity: SpaceDto, userid): Promise<Space> {
     const user = await this.userRepository.findOneBy({ id: userid });
     if (!user) {
       throw new NotFoundException('User not found');
     }
     entity.user = user;
+    entity.key = uuidv4();
     const space = this.spaceRepository.create(entity);
     const newSpace = await this.spaceRepository.save(space);
     return newSpace;
