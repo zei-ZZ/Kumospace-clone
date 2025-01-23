@@ -75,7 +75,7 @@ export class UserService {
         email,
       })
       .getOne();
-    if (!user) throw new NotFoundException('Compte inexistant');
+    if (!user) throw new NotFoundException('Account not found');
     const hashedPassword = await bcrypt.hash(password, user.salt);
     if (hashedPassword === user.password) {
       const payload = {
@@ -89,7 +89,7 @@ export class UserService {
         access_token: jwt,
       };
     } else {
-      throw new NotFoundException('password erroné');
+      throw new NotFoundException('wrong password');
     }
   }
 

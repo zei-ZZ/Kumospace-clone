@@ -9,11 +9,15 @@ import { environment } from '../../../environment';
 })
 export class AuthService {
 
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/user`;
 
   constructor(private http: HttpClient) { }
 
   register(userData: User): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/user/register`, userData);
+    return this.http.post<any>(`${this.apiUrl}/register`, userData);
+  }
+
+  login(credentials: { email: string; password: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials);
   }
 }

@@ -45,6 +45,29 @@ export class AuthComponent {
   onSignIn() {
     if (this.signInForm.valid) {
       console.log(this.signInForm.value);
+      const { email, password } = this.signInForm.value;
+      const credentials = { email: email!, password: password! };
+      this.authService.login(credentials).subscribe({
+        next: (response) => {
+          console.log(response);
+          this.storageService.setItem(
+            STORAGE_KEYS.ACCESS_TOKEN,
+            response.access_token
+          );
+          Swal.fire({
+            icon: 'success',
+            title: 'Login Successful',
+            text: 'You have been logged in successfully!',
+          });
+        },
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Login Failed',
+            text: error.error.message || 'An error occurred during login.',
+          });
+        }
+      });
     }
   }
 
@@ -71,8 +94,7 @@ export class AuthComponent {
           Swal.fire({
             icon: 'error',
             title: 'Registration Failed',
-            text:
-              error.error.message || 'An error occurred during registration.',
+            text: 'An error occurred during registration.',
           });
         },
       });
