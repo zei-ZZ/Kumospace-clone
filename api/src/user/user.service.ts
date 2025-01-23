@@ -86,7 +86,11 @@ export class UserService {
       const jwt = this.jwtService.sign(payload);
       return {
         msg: 'login success',
-        access_token: jwt,
+        user: {
+          id: user.id,
+          email: user.email,
+          token: jwt,
+        },
       };
     } else {
       throw new NotFoundException('wrong password');

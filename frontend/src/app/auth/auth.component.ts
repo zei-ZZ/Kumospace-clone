@@ -1,16 +1,13 @@
 import { Component, inject } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
-import { User } from '../shared/models/user';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { User, UserCredentials } from '../shared/models/user';
 import { AuthService } from '../shared/services/auth.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
 import { StorageService } from '../shared/services/storage.service';
 import { STORAGE_KEYS } from '../shared/constants/storage-keys';
 import { passwordMatchValidator } from '../shared/directives/password-match.directive';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-auth',
@@ -22,22 +19,27 @@ export class AuthComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private storageService = inject(StorageService);
+  private router = inject(Router);
 
   isSignUp = false;
   user = new User();
+  credentials = new UserCredentials();
 
   signInForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
   });
 
-  signUpForm = this.fb.group({
-    username: ['', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]],
-    confirmPassword: ['', Validators.required]
-  }, { validators:  passwordMatchValidator() });
-  
+  signUpForm = this.fb.group(
+    {
+      username: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required],
+    },
+    { validators: passwordMatchValidator() }
+  );
+
   toggleForm() {
     this.isSignUp = !this.isSignUp;
   }
@@ -46,19 +48,21 @@ export class AuthComponent {
     if (this.signInForm.valid) {
       console.log(this.signInForm.value);
       const { email, password } = this.signInForm.value;
-      const credentials = { email: email!, password: password! };
-      this.authService.login(credentials).subscribe({
+      this.credentials = { email: email!, password: password! };
+      this.authService.login(this.credentials).subscribe({
         next: (response) => {
           console.log(response);
           this.storageService.setItem(
             STORAGE_KEYS.ACCESS_TOKEN,
-            response.access_token
+            response.user.token
           );
+          this.authService.isAuthenticated.set(response.user);
           Swal.fire({
             icon: 'success',
             title: 'Login Successful',
             text: 'You have been logged in successfully!',
           });
+          this.router.navigate([`/userpage/${response.user.id}`]);
         },
         error: (error) => {
           Swal.fire({
@@ -66,7 +70,7 @@ export class AuthComponent {
             title: 'Login Failed',
             text: error.error.message || 'An error occurred during login.',
           });
-        }
+        },
       });
     }
   }
@@ -82,13 +86,15 @@ export class AuthComponent {
           console.log(response);
           this.storageService.setItem(
             STORAGE_KEYS.ACCESS_TOKEN,
-            response.access_token
+            response.user.token
           );
+          this.authService.isAuthenticated.set(response.user);
           Swal.fire({
             icon: 'success',
             title: 'Registration Successful',
             text: 'You have been registered successfully!',
           });
+          this.router.navigate([`/userpage/${response.user.id}`]);
         },
         error: (error) => {
           Swal.fire({
