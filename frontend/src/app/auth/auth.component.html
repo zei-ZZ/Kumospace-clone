@@ -1,0 +1,56 @@
+<div class="container">
+  <div class="cont" [class.s-signup]="isSignUp">
+    <div class="form sign-in">
+      <h2>Sign In</h2>
+      <form [formGroup]="signInForm" (ngSubmit)="onSignIn()">
+        <label>
+          <span>Email Address</span>
+          <input type="email" formControlName="email">
+        </label>
+        <label>
+          <span>Password</span>
+          <input type="password" formControlName="password">
+        </label>
+        <button class="submit" type="submit" [disabled]="signInForm.invalid">Sign In</button>
+      </form>
+    </div>
+    <div class="sub-cont">
+      <div class="img">
+        <div class="img-text m-up">
+          <h1>New here?</h1>
+          <p>Sign up and discover</p>
+        </div>
+        <div class="img-text m-in">
+          <h1>One of us?</h1>
+          <p>Just sign in</p>
+        </div>
+        <div class="img-btn" (click)="toggleForm()">
+          <span class="m-up">Sign Up</span>
+          <span class="m-in">Sign In</span>
+        </div>
+      </div>
+      <div class="form sign-up">
+        <h2>Sign Up</h2>
+        <form [formGroup]="signUpForm" (ngSubmit)="onSignUp()">
+          <label>
+            <span>Name</span>
+            <input type="text" formControlName="name">
+          </label>
+          <label>
+            <span>Email</span>
+            <input type="email" formControlName="email">
+          </label>
+          <label>
+            <span>Password</span>
+            <input type="password" formControlName="password">
+          </label>
+          <label>
+            <span>Confirm Password</span>
+            <input type="password" formControlName="confirmPassword">
+          </label>
+          <button type="submit" class="submit" [disabled]="signUpForm.invalid">Sign Up Now</button>
+        </form>
+      </div>
+    </div>
+  </div>  
+</div>
