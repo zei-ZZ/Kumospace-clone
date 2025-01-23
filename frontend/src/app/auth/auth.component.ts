@@ -56,6 +56,7 @@ export class AuthComponent {
             STORAGE_KEYS.ACCESS_TOKEN,
             response.user.token
           );
+          this.storageService.setItem(STORAGE_KEYS.USER_ID, response.user.id);
           this.authService.isAuthenticated.set(response.user);
           Swal.fire({
             icon: 'success',
@@ -88,6 +89,7 @@ export class AuthComponent {
             STORAGE_KEYS.ACCESS_TOKEN,
             response.user.token
           );
+          this.storageService.setItem(STORAGE_KEYS.USER_ID, response.user.id);
           this.authService.isAuthenticated.set(response.user);
           Swal.fire({
             icon: 'success',

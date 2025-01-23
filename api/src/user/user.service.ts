@@ -88,7 +88,6 @@ export class UserService {
         msg: 'login success',
         user: {
           id: user.id,
-          email: user.email,
           token: jwt,
         },
       };

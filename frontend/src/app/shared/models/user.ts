@@ -11,6 +11,5 @@ export class UserCredentials {
 
 export class UserAuth {
   id: string = '';
-  email: string = '';
   token: string = '';
 }
