@@ -7,6 +7,9 @@ export class Space {
   id: string;
 
   @Column('text')
+  name: string;
+
+  @Column('text')
   key: string;
 
   @Column('int', { default: 5 })

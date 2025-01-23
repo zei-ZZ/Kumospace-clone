@@ -8,6 +8,9 @@ export class User extends Timestamp {
   id: string;
 
   @Column('text')
+  username: string;
+
+  @Column('text')
   email: string;
 
   @Column()
