@@ -30,9 +30,9 @@ export class SpaceService {
 
   async findOne(id): Promise<Space> {
     const space = await this.spaceRepository
-      .createQueryBuilder('meal')
-      .leftJoinAndSelect('meal.user', 'user')
-      .where('meal.id = :id', { id })
+      .createQueryBuilder('space')
+      .leftJoinAndSelect('space.user', 'user')
+      .where('space.id = :id', { id })
       .getOne();
     if (!space) {
       throw new NotFoundException('Space not found');
@@ -42,10 +42,18 @@ export class SpaceService {
 
   async findByUser(userId: string) {
     return await this.spaceRepository
-      .createQueryBuilder('meal')
-      .leftJoinAndSelect('meal.user', 'user')
+      .createQueryBuilder('space')
+      .leftJoinAndSelect('space.user', 'user')
       .where('user.id = :userId', { userId })
       .getMany();
+  }
+
+  async findByKey(key: string) {
+    return await this.spaceRepository
+      .createQueryBuilder('space')
+      .leftJoinAndSelect('space.user', 'user')
+      .where('space.key = :key', { key })
+      .getOne();
   }
 
   async remove(id: string): Promise<DeleteResult> {

@@ -29,6 +29,11 @@ export class SpaceController {
     return this.spaceService.findOne(id);
   }
 
+  @Get('key/:key')
+  findByKey(@Param('key') key: string) {
+    return this.spaceService.findByKey(key);
+  }
+
   @Get('user/:userid')
   findByUser(@Param('userid') userid: string) {
     return this.spaceService.findByUser(userid);
@@ -38,13 +43,13 @@ export class SpaceController {
   @Delete(':id')
   async remove(@Param('id') id: string, @Body() body: { userId: string }) {
     const { userId } = body;
-    const meal = await this.spaceService.findOne(id);
-    if (!meal) {
-      throw new NotFoundException('Meal not found');
+    const space = await this.spaceService.findOne(id);
+    if (!space) {
+      throw new NotFoundException('Space not found');
     }
-    if (userId !== meal.user.id) {
+    if (userId !== space.user.id) {
       throw new UnauthorizedException(
-        'Unauthorized: User does not have permission to delete this meal',
+        'Unauthorized: User does not have permission to delete this space',
       );
     }
     return this.spaceService.remove(id);

@@ -56,6 +56,7 @@ export class UserService {
       };
       const jwt = this.jwtService.sign(payload);
       return {
+        msg: 'register success',
         access_token: jwt,
       };
     } catch (error) {
@@ -84,6 +85,7 @@ export class UserService {
       };
       const jwt = this.jwtService.sign(payload);
       return {
+        msg: 'login success',
         access_token: jwt,
       };
     } else {
