@@ -129,4 +129,21 @@ export class UserService {
     }
     return this.userRepository.save(entity);
   }
+  async validateToken(
+    token: string,
+  ): Promise<{ valid: boolean; userId?: string }> {
+    try {
+      const decoded = this.jwtService.verify(token);
+      const user = await this.userRepository.findOneBy({ id: decoded.sub });
+      if (!user) {
+        return { valid: false };
+      }
+      return {
+        valid: true,
+        userId: decoded.sub,
+      };
+    } catch (error) {
+      return { valid: false };
+    }
+  }
 }

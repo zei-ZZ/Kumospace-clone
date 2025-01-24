@@ -4,8 +4,6 @@ import { User, UserCredentials } from '../shared/models/user';
 import { AuthService } from '../shared/services/auth.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
-import { StorageService } from '../shared/services/storage.service';
-import { STORAGE_KEYS } from '../shared/constants/storage-keys';
 import { passwordMatchValidator } from '../shared/directives/password-match.directive';
 import { Router } from '@angular/router';
 
@@ -18,7 +16,6 @@ import { Router } from '@angular/router';
 export class AuthComponent {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
-  private storageService = inject(StorageService);
   private router = inject(Router);
 
   isSignUp = false;
@@ -46,18 +43,10 @@ export class AuthComponent {
 
   onSignIn() {
     if (this.signInForm.valid) {
-      console.log(this.signInForm.value);
       const { email, password } = this.signInForm.value;
       this.credentials = { email: email!, password: password! };
       this.authService.login(this.credentials).subscribe({
         next: (response) => {
-          console.log(response);
-          this.storageService.setItem(
-            STORAGE_KEYS.ACCESS_TOKEN,
-            response.user.token
-          );
-          this.storageService.setItem(STORAGE_KEYS.USER_ID, response.user.id);
-          this.authService.isAuthenticated.set(response.user);
           Swal.fire({
             icon: 'success',
             title: 'Login Successful',
@@ -78,19 +67,10 @@ export class AuthComponent {
 
   onSignUp() {
     if (this.signUpForm.valid) {
-      console.log(this.signUpForm.value);
       const { username, email, password } = this.signUpForm.value;
       this.user = { username: username!, email: email!, password: password! };
-      console.log(this.user);
       this.authService.register(this.user).subscribe({
         next: (response) => {
-          console.log(response);
-          this.storageService.setItem(
-            STORAGE_KEYS.ACCESS_TOKEN,
-            response.user.token
-          );
-          this.storageService.setItem(STORAGE_KEYS.USER_ID, response.user.id);
-          this.authService.isAuthenticated.set(response.user);
           Swal.fire({
             icon: 'success',
             title: 'Registration Successful',

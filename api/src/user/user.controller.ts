@@ -56,4 +56,9 @@ export class UserController {
     await this.userService.update(user.id, updateuser);
     return { fileName };
   }
+
+  @Post('validate-token')
+  async validateToken(@Body('token') token: string) {
+    return this.userService.validateToken(token);
+  }
 }
