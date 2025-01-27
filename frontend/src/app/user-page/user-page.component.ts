@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { UserProfileComponent } from "../user-profile/user-profile.component";
 import { UserInterface } from '../shared/models/user';
 import { ActivatedRoute } from '@angular/router';
@@ -13,18 +13,25 @@ import { UserService } from '../shared/services/user.service';
 export class UserPageComponent {
   route = inject(ActivatedRoute);
   userService = inject(UserService);
+  cdr = inject(ChangeDetectorRef);
 
   user: UserInterface = new UserInterface();
  
   ngOnInit(): void {
     const userId = this.route.snapshot.paramMap.get('userid');
-    console.log(userId);
     if (userId !== null) this.getUserById(userId);
   }
 
   getUserById(id: string): void {
      this.userService.getUserById(id).subscribe(response => {
-       console.log(response);
+       this.user = {
+        id: response.id,
+        username: response.username,
+        email: response.email,
+        imageProfile: response.ImageProfile,
+        spaces: response.spaces
+      };
+      this.cdr.detectChanges();
      });
   }
 }
