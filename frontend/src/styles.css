@@ -1,1 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,600,700,800&display=swap');
+
+body{
+  background: #E7E6E9;
+  font-family: 'Nunito', sans-serif;
+}
