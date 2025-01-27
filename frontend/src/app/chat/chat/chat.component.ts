@@ -30,6 +30,7 @@ export class ChatComponent implements OnInit {
   // Fonction pour envoyer un message
   sendMessage(): void {
     if (this.message.trim()) {
+      
       this.chatService.sendMessage(this.spaceId, this.userId, this.message);
       this.message = ''; // Réinitialiser le champ message après envoi
     }

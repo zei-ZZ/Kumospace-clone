@@ -21,6 +21,7 @@ export class ChatService {
   // Envoyer un message dans un espace
   sendMessage(spaceId: string, userId: string, message: string): void {
     spaceId='916de4cb-4db4-4225-acf2-c5f570237f66'
+    userId="50fc50f3-43a4-44b6-9b92-20ad6ddb017b"
     this.socket.emit('sendMessage', { message, spaceId, userId });
   }
 
