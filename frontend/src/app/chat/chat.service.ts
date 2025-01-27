@@ -1,34 +1,31 @@
+
+
 import { Injectable } from '@angular/core';
-import { io, Socket } from 'socket.io-client';
+import { io } from 'socket.io-client';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ChatService {
-  private socket: Socket;
+  private socket: any;
+  private messagesSubject = new BehaviorSubject<string[]>([]);
+  public messages$ = this.messagesSubject.asObservable();
 
   constructor() {
-    // Connecter le client au serveur WebSocket
+    // Crée une connexion avec le serveur WebSocket
     this.socket = io('http://localhost:3000');
-  }
-
-  // Rejoindre un espace spécifique 
-  joinSpace(spaceId: string): void {
-    spaceId='916de4cb-4db4-4225-acf2-c5f570237f66'
-    this.socket.emit('joinSpace', spaceId);
-  }
-
-  // Envoyer un message dans un espace
-  sendMessage(spaceId: string, userId: string, message: string): void {
-    spaceId='916de4cb-4db4-4225-acf2-c5f570237f66'
-    userId="50fc50f3-43a4-44b6-9b92-20ad6ddb017b"
-    this.socket.emit('sendMessage', { message, spaceId, userId });
-  }
-
-  // Recevoir un message d'un espace
-  receiveMessage(callback: (message: any) => void): void {
-    this.socket.on('receiveMessage', (message) => {
-      callback(message);
+    
+    // Écoute des nouveaux messages
+    this.socket.on('chatMessage', (message: string) => {
+      const currentMessages = this.messagesSubject.value;
+      this.messagesSubject.next([...currentMessages, message]);
     });
   }
+
+  // Envoie un message au serveur
+  sendMessage(message: string): void {
+    this.socket.emit('chatMessage', message);
+  }
 }
+

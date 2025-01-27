@@ -1,38 +1,34 @@
+// chat.component.ts (Frontend)
+
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-chat',
-  standalone:true,
+  standalone : true,
   imports :[FormsModule],
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css'],
+  styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
-  spaceId: string = 'space1'; // L'espace dans lequel l'utilisateur se trouve
-  userId: string = 'user1'; // ID de l'utilisateur
   message: string = '';
-  messages: any[] = []; // Liste des messages reçus
+  messages: string[] = [];
 
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
-    // Rejoindre l'espace
-    this.chatService.joinSpace(this.spaceId);
-
-    // Recevoir les messages en temps réel
-    this.chatService.receiveMessage((message) => {
-      this.messages.push(message);
+    // Récupère les messages en temps réel
+    this.chatService.messages$.subscribe((messages) => {
+      this.messages = messages;
     });
   }
 
-  // Fonction pour envoyer un message
+  // Envoie le message
   sendMessage(): void {
     if (this.message.trim()) {
-      
-      this.chatService.sendMessage(this.spaceId, this.userId, this.message);
-      this.message = ''; // Réinitialiser le champ message après envoi
+      this.chatService.sendMessage(this.message);
+      this.message = ''; // Réinitialise le champ de message
     }
   }
 }
