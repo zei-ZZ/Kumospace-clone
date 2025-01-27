@@ -1,32 +1,38 @@
-import {
-  WebSocketGateway,
-  WebSocketServer,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-  SubscribeMessage,
-} from '@nestjs/websockets';
+// src/chat/chat.gateway.ts
+
+import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, MessageBody, WsResponse, ConnectedSocket } from '@nestjs/websockets';
+import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ cors: true }) // Permettre le CORS pour Angular
+@WebSocketGateway(3000, {
+  cors: {
+    origin: '*', // Permet d'accepter les connexions depuis n'importe quelle origine
+  },
+})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer()
-  server: Server;
+  private logger: Logger = new Logger('ChatGateway');
 
-  // Gère les connexions des utilisateurs
+  // Lorsqu'un utilisateur se connecte
   handleConnection(client: Socket) {
-    console.log(`User connected: ${client.id}`);
+    this.logger.log(`Client connected: ${client.id}`);
   }
 
-  // Gère les déconnexions des utilisateurs
+  // Lorsqu'un utilisateur se déconnecte
   handleDisconnect(client: Socket) {
-    console.log(`User disconnected: ${client.id}`);
+    this.logger.log(`Client disconnected: ${client.id}`);
   }
 
-  // Recevoir les messages des utilisateurs
-  @SubscribeMessage('sendMessage')
-  handleMessage(client: Socket, payload: { username: string; message: string }) {
-    console.log(`Message from ${payload.username}: ${payload.message}`);
-    // Diffuser le message à tous les clients
-    this.server.emit('receiveMessage', payload);
+  // Lorsqu'un utilisateur envoie un message
+  @SubscribeMessage('chatMessage')
+  handleChatMessage(@MessageBody() message: string, @ConnectedSocket() client: Socket): WsResponse<string> {
+    this.logger.log(`Message from ${client.id}: ${message}`);
+    return { event: 'chatMessage', data: message };
+  }
+
+  // Enregistrer un utilisateur
+  @SubscribeMessage('register')
+  handleRegister(@MessageBody() username: string, @ConnectedSocket() client: Socket) {
+    client.data.username = username;  // Associe l'utilisateur au socket
+    this.logger.log(`User registered: ${username}`);
   }
 }
