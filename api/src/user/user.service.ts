@@ -108,9 +108,9 @@ export class UserService {
     const uploadPath = `public/uploads/${destination}/${fileName}`;
     const reader = createReadStream(file.path);
     const writer = createWriteStream(uploadPath);
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       reader.pipe(writer);
-      writer.on('finish', resolve);
+      writer.on('finish', () => resolve());
       writer.on('error', reject);
     });
     return fileName;

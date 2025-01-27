@@ -1,34 +1,32 @@
-import { Logger } from '@nestjs/common';
 import {
-  ConnectedSocket,
-  MessageBody,
+  WebSocketGateway,
+  WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
   SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true }) // Permettre le CORS pour Angular
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private readonly logger = new Logger(ChatGateway.name);
+  @WebSocketServer()
+  server: Server;
 
-  @WebSocketServer() server: Server;
-
-  @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    return 'Hello world!';
+  // Gère les connexions des utilisateurs
+  handleConnection(client: Socket) {
+    console.log(`User connected: ${client.id}`);
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client id: ${client.id} connected`);
-    this.logger.debug(
-      `Number of connected clients: ${this.server.sockets.sockets.size}`,
-    );
-  }
-
+  // Gère les déconnexions des utilisateurs
   handleDisconnect(client: Socket) {
-    this.logger.log(`Cliend id:${client.id} disconnected`);
+    console.log(`User disconnected: ${client.id}`);
+  }
+
+  // Recevoir les messages des utilisateurs
+  @SubscribeMessage('sendMessage')
+  handleMessage(client: Socket, payload: { username: string; message: string }) {
+    console.log(`Message from ${payload.username}: ${payload.message}`);
+    // Diffuser le message à tous les clients
+    this.server.emit('receiveMessage', payload);
   }
 }
