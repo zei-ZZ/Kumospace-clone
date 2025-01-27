@@ -1,10 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
-import { User, UserAuth, UserCredentials } from '../models/user';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { inject, Injectable } from '@angular/core';
+import { UserInterface } from '../models/user';
+import { Observable,  } from 'rxjs';
 import { environment } from '../../../environment';
-import { STORAGE_KEYS } from '../constants/storage-keys';
-import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +16,16 @@ export class UserService {
   }
 
   getUserById(id: string): Observable<any> {
-    return this.http.get<User>(`${this.apiUrl}/${id}`);
+    return this.http.get<UserInterface>(`${this.apiUrl}/${id}`);
+  }
+
+  getProfileImageUrl(user: UserInterface): string {
+    const baseUrl = environment.apiUrl;
+    if (user.imageProfile) {
+      return `${baseUrl}/uploads/user/${user.imageProfile}`;
+    } else {
+      return `${baseUrl}/uploads/user/default.jpg`;
+    }
   }
 
 }
