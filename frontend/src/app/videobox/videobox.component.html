@@ -1,4 +1,14 @@
 <div>
-    <h2>Local Video</h2>
-    <video #localVideo autoplay muted></video>
+  <h2>My Peer ID: {{ peerId }}</h2>
+  <h3>Room ID: {{ roomId }}</h3>
+</div>
+
+<div>
+  <h3>Local Video</h3>
+  <video #localVideo autoplay [muted]="'muted'"></video>
+</div>
+
+<div>
+  <h3>Remote Videos</h3>
+  <div #remoteVideos ></div>
 </div>
