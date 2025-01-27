@@ -1,38 +1,37 @@
-// src/chat/chat.gateway.ts
-
-import { WebSocketGateway, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, MessageBody, WsResponse, ConnectedSocket } from '@nestjs/websockets';
-import { Logger } from '@nestjs/common';
+import { WebSocketGateway,
+         SubscribeMessage,
+         MessageBody, 
+         OnGatewayInit,
+         OnGatewayConnection,
+         OnGatewayDisconnect,
+         WebSocketServer 
+        } from '@nestjs/websockets';
+        
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway(3000, {
-  cors: {
-    origin: '*', // Permet d'accepter les connexions depuis n'importe quelle origine
-  },
-})
-export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  private logger: Logger = new Logger('ChatGateway');
+@WebSocketGateway()  //c'est notre  WebSocket Gateway
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer() server: Server;
 
-  // Lorsqu'un utilisateur se connecte
+  // Cette méthode est appelée lorsque le serveur WebSocket est initialisé
+  afterInit() {
+    console.log('Serveur WebSocket initialisé');
+  }
+
+  // Cette méthode est appelée lorsqu'un client se connecte
   handleConnection(client: Socket) {
-    this.logger.log(`Client connected: ${client.id}`);
+    console.log(`Client connecté : ${client.id}`);
   }
 
-  // Lorsqu'un utilisateur se déconnecte
+  // Cette méthode est appelée lorsqu'un client se déconnecte
   handleDisconnect(client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
+    console.log(`Client déconnecté : ${client.id}`);
   }
 
-  // Lorsqu'un utilisateur envoie un message
-  @SubscribeMessage('chatMessage')
-  handleChatMessage(@MessageBody() message: string, @ConnectedSocket() client: Socket): WsResponse<string> {
-    this.logger.log(`Message from ${client.id}: ${message}`);
-    return { event: 'chatMessage', data: message };
-  }
-
-  // Enregistrer un utilisateur
-  @SubscribeMessage('register')
-  handleRegister(@MessageBody() username: string, @ConnectedSocket() client: Socket) {
-    client.data.username = username;  // Associe l'utilisateur au socket
-    this.logger.log(`User registered: ${username}`);
+  // Cette méthode reçoit les messages du client
+  @SubscribeMessage('sendMessage')
+  handleMessage(@MessageBody() message: string): void {
+    console.log(`Message reçu: ${message}`);
+    this.server.emit('receiveMessage', message);  // Émet à tous les clients connectés
   }
 }
