@@ -1,3 +1,5 @@
+import { Space } from "./space";
+
 export class User {
   username: string = '';
   email: string = '';
@@ -12,4 +14,12 @@ export class UserCredentials {
 export class UserAuth {
   id: string = '';
   token: string = '';
+}
+
+export class UserInterface {
+  id: string = '';
+  username: string = '';
+  email: string = '';
+  imageProfile: string = '';
+  spaces: Space[] = [];
 }
