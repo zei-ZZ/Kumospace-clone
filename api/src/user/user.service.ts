@@ -57,7 +57,10 @@ export class UserService {
       const jwt = this.jwtService.sign(payload);
       return {
         msg: 'register success',
-        access_token: jwt,
+        user: {
+          id: user.id,
+          token: jwt,
+        },
       };
     } catch (error) {
       throw new HttpException(

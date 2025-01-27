@@ -1,9 +1,8 @@
 @import url("https://fonts.googleapis.com/css?family=Montserrat:600");
 @import url("https://fonts.googleapis.com/css?family=Montserrat:800");
 @import url("https://fonts.googleapis.com/css?family=Montserrat");
-body {
-  font-family: "Montserrat", sans-serif;
-  background: linear-gradient(270deg, #ffead1, #ffb6bd, #e0b5ff);
+
+.cont {
   background-size: 150% 150%;
   animation: backgroundAnimation 10s ease infinite;
   display: flex;
@@ -21,8 +20,6 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  max-height: 750px;
-  max-width: 900px;
 }
 
 .profile-bg {
@@ -49,9 +46,9 @@ body {
   animation-fill-mode: both;
   position: relative;
   border-radius: 10px;
-  box-shadow: 0 25px 45px -20px rgba(255, 0, 47, 0.55),
-    inset 0 0px 120px rgba(255, 0, 47, 0.75);
-  width: 45%;
+  box-shadow: 0 25px 45px -20px #2634DF,
+    inset 0 0px 120px #2634DF;
+  width: 25%;
   flex: none;
   background-image: url("https://zephyo.github.io/22Days/code/3/graphics/profile.png");
   background-size: cover;
@@ -64,20 +61,13 @@ body {
   width: 100%;
   height: 100%;
   border-radius: 10px;
-  background-color: #ff2256;
+  background-color:#2634DF;
   opacity: 0.8;
   mix-blend-mode: screen;
 }
 
-.camera {
-  color: #FFFF;
-  position: absolute;
-  bottom: 28px;
-  left: 28px;
-  font-size: 1.3rem;
-}
-
 .profile-info {
+  font-family: "Montserrat", sans-serif;
   margin-top: 120px;
   padding: 8% 8% 2% 8%;
   position: relative;
@@ -103,6 +93,14 @@ h1.second-name {
   left: -45px;
 }
 
+h1.first-name, h1.second-name {
+  text-shadow: 
+    0 0 5px rgb(147, 147, 209),
+    0 0 10px rgb(147, 147, 209),
+    0 0 15px rgb(147, 147, 209);
+  color:rgb(33, 34, 34); 
+}
+
 .profile-info h2 {
   font-size: 1rem;
   font-weight: 600;
@@ -111,34 +109,12 @@ h1.second-name {
   margin-bottom: 5%;
 }
 
-.social-media-icons a,
 .profile-info h2 {
-  color: #f63d47;
+  color: #2634DF;
 }
 
 .profile-info p {
   line-height: 1.5rem;
-}
-
-.social-media-icons {
-  display: flex;
-}
-
-.social-media-icons a {
-  margin-top: 7%;
-  font-size: 1.2rem;
-  flex: auto;
-  text-align: center;
-}
-
-.camera,
-.social-media-icons a {
-  transition: text-shadow 0.5s ease;
-}
-
-.camera:hover,
-.social-media-icons a:hover {
-  text-shadow: 0px 5px 15px rgba(255, 0, 47, 0.45);
 }
 
 .statistics {
