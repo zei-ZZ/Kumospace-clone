@@ -1,9 +1,10 @@
 :host {
     height: 100%;
-    background: var(--bg);
+    background: rgb(53, 51, 51);
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
 }
 
 .camera {
@@ -11,25 +12,26 @@
     height: 100vh;
     overflow: hidden;
     position: relative;
-    border: 2px solid black;
+    /*border: 2px solid black;*/
 }
 
 .map {
     image-rendering: pixelated;
     background-image: url("../../assets/office.png");
-    width: 180vw;
-    height: 180vh;
-    position: relative;
-    border: 2px solid yellow;
-    background-size: contain;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
+    position: absolute;
+    /*border: 2px solid yellow;*/
+    width: calc(var(--map-width)); 
+    height: calc(var(--map-height)); 
 }
 
 .character {
     width: 10vw;
     height: 10vw;
     position: absolute;
-    overflow: hidden;
+    border-radius: 18%;
+    overflow:hidden;
     background-color: red;
 }
 
@@ -39,7 +41,6 @@
         width: 150vw;
         height: 150vh;
     }
-
     .character {
         width: 8vw;
         height: 8vw;
@@ -52,9 +53,11 @@
         width: 120vw;
         height: 120vh;
     }
-
     .character {
         width: 5vw;
         height: 5vw;
     }
 }
+
+
+

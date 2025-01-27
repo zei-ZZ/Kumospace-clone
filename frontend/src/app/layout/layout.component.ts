@@ -27,18 +27,22 @@ export class LayoutComponent implements OnInit, OnDestroy {
    * Math.max(0, ...) prevents map from moving into neg coords
    **/
 
-  mapX = computed(() =>
-    Math.min(
+  mapX = computed(() => {
+    const maxMapX = Math.max(0, this.mapWidth() - window.innerWidth);
+    return Math.min(
       Math.max(0, this.charX() - window.innerWidth / 2),
-      this.mapWidth() - window.innerWidth
-    )
-  );
-  mapY = computed(() =>
-    Math.min(
+      maxMapX
+    );
+  });
+  
+  mapY = computed(() => {
+    const maxMapY = Math.max(0, this.mapHeight() - window.innerHeight);
+    return Math.min(
       Math.max(0, this.charY() - window.innerHeight / 2),
-      this.mapHeight() - window.innerHeight
-    )
-  );
+      maxMapY
+    );
+  });
+  
 
   ngOnInit() {
     this.updateMapDimensions();
@@ -128,8 +132,23 @@ export class LayoutComponent implements OnInit, OnDestroy {
   }
 
   private updateMapDimensions() {
-    this.mapWidth.set(this.calculateMapWidth());
-    this.mapHeight.set(this.calculateMapHeight());
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+  
+    if (vw >= 1000) {
+      this.mapWidth.set(vw * 1.2); 
+      this.mapHeight.set(vh * 1.2);
+    } else if (vw >= 700) {
+      this.mapWidth.set(vw * 1.5); 
+      this.mapHeight.set(vh * 1.5); 
+    } else {
+      this.mapWidth.set(vw * 1.8); 
+      this.mapHeight.set(vh * 1.8); 
+    }
+  
+    console.log(
+      `Map dimensions updated values after resizing screen are : Width = ${this.mapWidth()}, Height = ${this.mapHeight()}`
+    );
   }
-
+  
 }
