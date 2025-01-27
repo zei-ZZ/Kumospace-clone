@@ -1,0 +1,31 @@
+<div class="game-container">
+    <div
+      class="game-world"
+      [style.transform]="positionSignal()"
+      [style.width.px]="map[0].length * tileSize"
+      [style.height.px]="map.length * tileSize"
+    >
+      <div
+        *ngFor="let row of map; let rowIndex = index"
+        class="tile-row"
+        [style.height.px]="tileSize"
+      >
+        <div
+          *ngFor="let tile of row; let colIndex = index"
+          class="tile"
+          [ngClass]="{ wall: tile === 1, walkable: tile === 0 }"
+          [style.width.px]="tileSize"
+          [style.height.px]="tileSize"
+        ></div>
+      </div>
+  
+      <div
+        class="character"
+        [style.left.px]="characterPosition().x * tileSize"
+        [style.top.px]="characterPosition().y * tileSize"
+        [style.width.px]="tileSize * 0.8"
+        [style.height.px]="tileSize * 0.8"
+      ></div>
+    </div>
+  </div>
+  

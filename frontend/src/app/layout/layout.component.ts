@@ -134,7 +134,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
   private updateMapDimensions() {
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-  
+
     if (vw >= 1000) {
       this.mapWidth.set(vw * 1.2); 
       this.mapHeight.set(vh * 1.2);

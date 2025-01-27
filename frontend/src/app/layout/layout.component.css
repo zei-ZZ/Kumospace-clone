@@ -27,8 +27,8 @@
 }
 
 .character {
-    width: 10vw;
-    height: 10vw;
+    width: 16px;
+    height: 16x;
     position: absolute;
     border-radius: 18%;
     overflow:hidden;
