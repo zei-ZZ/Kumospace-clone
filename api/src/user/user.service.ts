@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -57,7 +56,10 @@ export class UserService {
       const jwt = this.jwtService.sign(payload);
       return {
         msg: 'register success',
-        access_token: jwt,
+        user: {
+          id: user.id,
+          token: jwt,
+        },
       };
     } catch (error) {
       throw new HttpException(
@@ -75,7 +77,7 @@ export class UserService {
         email,
       })
       .getOne();
-    if (!user) throw new NotFoundException('Compte inexistant');
+    if (!user) throw new NotFoundException('Account not found');
     const hashedPassword = await bcrypt.hash(password, user.salt);
     if (hashedPassword === user.password) {
       const payload = {
@@ -86,10 +88,13 @@ export class UserService {
       const jwt = this.jwtService.sign(payload);
       return {
         msg: 'login success',
-        access_token: jwt,
+        user: {
+          id: user.id,
+          token: jwt,
+        },
       };
     } else {
-      throw new NotFoundException('password erroné');
+      throw new NotFoundException('wrong password');
     }
   }
 
@@ -125,5 +130,34 @@ export class UserService {
       throw new NotFoundException('entity Not Found');
     }
     return this.userRepository.save(entity);
+  }
+  async validateToken(
+    token: string,
+  ): Promise<{ valid: boolean; userId?: string }> {
+    try {
+      const decoded = this.jwtService.verify(token);
+      const user = await this.userRepository.findOneBy({ id: decoded.sub });
+      if (!user) {
+        return { valid: false };
+      }
+      return {
+        valid: true,
+        userId: decoded.sub,
+      };
+    } catch (error) {
+      return { valid: false };
+    }
+  }
+
+  async findOne(id: string): Promise<User> {
+    const user = await this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.spaces', 'space')
+      .where('user.id = :id', { id })
+      .getOne();
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
   }
 }

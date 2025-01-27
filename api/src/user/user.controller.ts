@@ -24,6 +24,11 @@ import { UpdateUserDto } from './update.user.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.findOne(id);
+  }
+
   @Get('email/:email')
   async findByEmail(@Param('email') email: string) {
     return this.userService.findByEmail(email);
@@ -55,5 +60,10 @@ export class UserController {
     updateuser.ImageProfile = fileName;
     await this.userService.update(user.id, updateuser);
     return { fileName };
+  }
+
+  @Post('validate-token')
+  async validateToken(@Body('token') token: string) {
+    return this.userService.validateToken(token);
   }
 }
