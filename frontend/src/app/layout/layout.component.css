@@ -17,18 +17,19 @@
 .map {
     image-rendering: pixelated;
     background-image: url("../../assets/office.png");
-    background-size: cover;
     width: 180vw;
     height: 180vh;
     position: relative;
     border: 2px solid yellow;
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 .character {
     width: 10vw;
     height: 10vw;
     position: absolute;
-    overflow:hidden;
+    overflow: hidden;
     background-color: red;
 }
 
@@ -38,6 +39,7 @@
         width: 150vw;
         height: 150vh;
     }
+
     .character {
         width: 8vw;
         height: 8vw;
@@ -50,11 +52,9 @@
         width: 120vw;
         height: 120vh;
     }
+
     .character {
         width: 5vw;
         height: 5vw;
     }
 }
-
-
-
