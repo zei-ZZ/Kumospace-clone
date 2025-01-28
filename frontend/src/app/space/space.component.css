@@ -1,0 +1,26 @@
+.space-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-image: url('../../assets/office.png'); 
+    background-size: cover;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
+  }
+  
+  .character {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background-color: red;
+    border-radius: 20%;
+  }
+  
+  @media (max-width: 768px) {
+    .character {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  
