@@ -8,10 +8,11 @@ import {
 import { TileMapService } from '../shared/services/tile-map.service';
 import * as mapData from '../../assets/kumo.json';
 import Swal from 'sweetalert2';
+import { UserAvatarComponent } from "../user-avatar/user-avatar.component";
 
 @Component({
   selector: 'app-space',
-  imports: [],
+  imports: [UserAvatarComponent],
   templateUrl: './space.component.html',
   styleUrl: './space.component.css',
 })

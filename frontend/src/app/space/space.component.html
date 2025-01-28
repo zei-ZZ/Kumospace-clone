@@ -4,9 +4,7 @@
     '-' + viewportPosition().x + 'px -' + viewportPosition().y + 'px'
   "
 >
-  <div
-    class="character"
-    [style.left.px]="char().x"
-    [style.top.px]="char().y"
-  ></div>
+  <div class="character" [style.left.px]="char().x" [style.top.px]="char().y">
+    <app-user-avatar></app-user-avatar>
+  </div>
 </div>
