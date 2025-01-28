@@ -42,8 +42,7 @@ export class ChatComponent implements OnInit {
     }
   }
   extractUsernameFromToken(): void {
-    //const token = localStorage.getItem('token'); // Récupérer le token depuis le local storage mais pour le moment je travaille avec un exemple
-    const token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1MGZjNTBmMy00M2E0LTQ0YjYtOWI5Mi0yMGFkNmRkYjAxN2IiLCJ1c2VybmFtZSI6IkZhcmFoYmVsaGFqIiwiZW1haWwiOiJGYXJhaGJlbGhhakBleGFtcGxlLmNvbSIsImlhdCI6MTczNzk3MTYxMywiZXhwIjoxNzM3OTc1MjEzfQ.qWNMv2HVGmPeG5FMQyL8LLAEJu0ojnzSv06IfxXamqo"
+    const token = localStorage.getItem('access_token'); 
     if (token) {
       const decodedToken: any = jwtDecode(token); // Décoder le token
       this.userName = decodedToken.username; // Extraire username
