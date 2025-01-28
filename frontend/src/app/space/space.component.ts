@@ -1,4 +1,5 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, HostListener, inject, signal, WritableSignal } from '@angular/core';
+import { TileMapService } from '../shared/services/tile-map.service';
 import * as mapData from '../../assets/kumo.json';
 
 @Component({
@@ -9,6 +10,8 @@ import * as mapData from '../../assets/kumo.json';
 })
 export class SpaceComponent {
 
+  private tileMapService = inject(TileMapService);
+
   mapWidth = 1680;
   mapHeight = 1200;
   tileSize = 16;
@@ -17,45 +20,24 @@ export class SpaceComponent {
   viewportPosition = signal({ x: 0, y: 0 });
 
   collisionMap = signal<number[][]>([]);
+  doorMap = signal<number[][]>([]);
 
   ngOnInit() {
-    this.loadCollisionMap();
+    this.loadMaps();
   }
 
-  loadCollisionMap() {
-    const collisionLayer = mapData.layers.find((layer: any) => layer.name === 'Collision');
-    if (collisionLayer) {
-      const flatData = collisionLayer.data;
-      const binaryData = this.processCollisionLayer(flatData);
-      this.collisionMap.set(this.convertTo2DArray(binaryData, mapData.width, mapData.height));
+  loadMaps() {
+    this.loadLayer('Collision', this.collisionMap);
+    this.loadLayer('Doors', this.doorMap);
+  }
+
+  private loadLayer(layerName: string, mapSignal: WritableSignal<number[][]>) {
+    const layer = mapData.layers.find((l: any) => l.name === layerName);
+    if (layer) {
+      const flatData = layer.data;
+      const binaryData = this.tileMapService.processLayer(flatData);
+      mapSignal.set(this.tileMapService.convertTo2DArray(binaryData, mapData.width, mapData.height));
     }
-  }
-
-  /**
-   * Convert raw collision layer data to binary
-   * rawData = Flat array from the collision layer
-   * result = Binary array (1 for obstacles, 0 for walkable areas)
-   * Convert non-zero to 1
-   */
-  processCollisionLayer(rawData: number[]): number[] {
-    return rawData.map((tile) => (tile === 0 ? 0 : 1)); 
-  }
-
-  /**
-   * Convert a flat array to a 2D array
-   * data = Binary flat array
-   * width = Map width in tiles
-   * height = Map height in tiles
-   * result = 2D array representing the collision map
-   */
-  convertTo2DArray(data: number[], width: number, height: number): number[][] {
-    const result: number[][] = [];
-    for (let row = 0; row < height; row++) {
-      const start = row * width;
-      const end = start + width;
-      result.push(data.slice(start, end));
-    }
-    return result;
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -83,10 +65,13 @@ export class SpaceComponent {
     if (this.isWalkable(newX, newY)) {
       this.char.set({ x: newX, y: newY });
       this.updateViewport(newX, newY);
+
+      if (this.isAtDoor(newX, newY)) {
+        alert('Do you want to enter?');
+      }
     }
   }
 
-  // Checking if the tile is walkable
   isWalkable(x: number, y: number): boolean {
     const tileX = Math.floor(x / this.tileSize);
     const tileY = Math.floor(y / this.tileSize);
@@ -96,11 +81,17 @@ export class SpaceComponent {
       y >= 0 &&
       x < this.mapWidth &&
       y < this.mapHeight &&
-      this.collisionMap()[tileY]?.[tileX] === 0 
+      this.collisionMap()[tileY]?.[tileX] === 0
     );
   }
 
-  // Adjust the viewport to follow the character
+  isAtDoor(x: number, y: number): boolean {
+    const tileX = Math.floor(x / this.tileSize);
+    const tileY = Math.floor(y / this.tileSize);
+
+    return this.doorMap()[tileY]?.[tileX] === 1;
+  }
+
   updateViewport(x: number, y: number) {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
