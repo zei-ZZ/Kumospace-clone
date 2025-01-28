@@ -28,6 +28,10 @@ export class AuthService {
     }
   }
 
+  getAuthorizationToken(): string | null {
+    return this.storageService.getItem(STORAGE_KEYS.ACCESS_TOKEN);
+  }
+
   validateToken(token: string): Observable<boolean> {
     return this.http.post<{valid: boolean; userId?: string}>(`${this.apiUrl}/validate-token`, { token }).pipe(
       tap(response => {
