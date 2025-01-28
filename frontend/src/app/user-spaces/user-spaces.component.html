@@ -2,11 +2,16 @@
   <div class="row row-cols-1 row-cols-md-2 g-4">
     @for (space of spaces; track space.id) {
       <div class="col">
-        <div class="card h-100 w-200">
+        <div class="card h-100 w-200" (click)="navigateToSpace(space.key)">
           <div class="card-body">
             <h4 class="card-title">{{ space.name }}</h4>
             <div class="d-flex justify-content-between align-items-center">
-              <span class="badge bg-secondary">{{ space.key }}</span>
+              <span 
+                class="badge bg-secondary copy-badge" 
+                (click)="copySpaceKey($event, space.key)" 
+                title="Click to copy">
+                {{ space.key }}
+              </span>
             </div>
           </div>
         </div>

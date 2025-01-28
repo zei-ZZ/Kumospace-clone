@@ -3,6 +3,8 @@ import { Space } from '../shared/models/space';
 import { UserDto } from '../shared/models/user';
 import { SpaceService } from '../shared/services/space.service';
 import { catchError, of, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-spaces',
@@ -14,6 +16,8 @@ export class UserSpacesComponent {
   @Input() user!: UserDto;
   spaces: Space[] = [];
   spaceService = inject(SpaceService);
+  router = inject(Router);
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['user'] && changes['user'].currentValue) {
@@ -38,5 +42,23 @@ export class UserSpacesComponent {
         return of([]);
       })
     ).subscribe();
+  }
+
+  navigateToSpace(spaceKey: string): void {
+    this.router.navigate(['/layout', spaceKey]);
+  }
+
+  copySpaceKey(event: Event, key: string): void {
+    event.stopPropagation();
+    navigator.clipboard.writeText(key).then(() => {
+      Swal.fire({
+        toast: true,
+        position: 'top',
+        icon: 'success',
+        title: 'Space key copied to clipboard!',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    });
   }
 }
