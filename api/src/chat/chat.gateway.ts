@@ -5,23 +5,16 @@ import {
   MessageBody,
   ConnectedSocket,
 } from '@nestjs/websockets';
-
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ cors: true }) 
-
+@WebSocketGateway({ cors: true }) // Activez CORS si nécessaire
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  private readonly room = 'defaultRoom';
-
   // Lorsqu'un client se connecte
   handleConnection(@ConnectedSocket() client: Socket) {
     console.log(`Client connected: ${client.id}`);
-    // Rejoindre la room dès la connexion
-    client.join(this.room);
-    console.log(`Client ${client.id} joined room ${this.room}`);
   }
 
   // Lorsqu'un client se déconnecte
@@ -29,13 +22,25 @@ export class ChatGateway {
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  // Envoyer un message à la room
+  // Rejoindre une room basée sur le spaceKey
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() spaceKey: string,
+  ) {
+    // Rejoindre la room correspondant au spaceKey
+    client.join(spaceKey);
+    console.log(`Client ${client.id} joined room ${spaceKey}`);
+  }
+
+  // Envoyer un message à une room spécifique
   @SubscribeMessage('sendMessage')
   handleSendMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() message: string,
+    @MessageBody() payload: { spaceKey: string; message: string },
   ) {
-    this.server.to(this.room).emit('receiveMessage', { message });
-    console.log(`Message sent to room ${this.room}: ${message}`);
+    const { spaceKey, message } = payload;
+    this.server.to(spaceKey).emit('receiveMessage', { message });
+    console.log(`Message sent to room ${spaceKey}: ${message}`);
   }
 }
