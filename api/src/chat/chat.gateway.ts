@@ -42,6 +42,7 @@ export class ChatGateway {
     console.log('Payload received:', payload);
 
     const { spaceKey, message, sender } = payload;
+    console.log("i m the sencer",sender)
     this.server.to(spaceKey).emit('receiveMessage', { message, sender }); 
     console.log(`Message sent to room ${spaceKey} by ${sender}: ${message}`);
   }
