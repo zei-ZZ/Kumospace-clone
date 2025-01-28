@@ -10,12 +10,13 @@ export const routes: Routes = [
     component: AuthComponent,
   },
   {
-    path: 'userpage/:userid', 
-    component: UserPageComponent, 
-    canActivate: [authGuard]
+    path: 'userpage/:userid',
+    component: UserPageComponent,
+    canActivate: [authGuard],
   },
   {
-    path: 'layout',
-    component: LayoutComponent
+    path: 'layout/:spaceKey',
+    component: LayoutComponent,
+    // canActivate: [authGuard]
   },
 ];
