@@ -19,4 +19,9 @@ export const routes: Routes = [
     component: LayoutComponent,
     // canActivate: [authGuard]
   },
+  {
+    // to be removed (dev mode only)
+    path: 'layout',
+    component: LayoutComponent,
+  },
 ];

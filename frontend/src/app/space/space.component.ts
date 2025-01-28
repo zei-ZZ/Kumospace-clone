@@ -1,6 +1,13 @@
-import { Component, HostListener, inject, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { TileMapService } from '../shared/services/tile-map.service';
 import * as mapData from '../../assets/kumo.json';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-space',
@@ -9,7 +16,6 @@ import * as mapData from '../../assets/kumo.json';
   styleUrl: './space.component.css',
 })
 export class SpaceComponent {
-
   private tileMapService = inject(TileMapService);
 
   mapWidth = 1680;
@@ -36,13 +42,20 @@ export class SpaceComponent {
     if (layer) {
       const flatData = layer.data;
       const binaryData = this.tileMapService.processLayer(flatData);
-      mapSignal.set(this.tileMapService.convertTo2DArray(binaryData, mapData.width, mapData.height));
+      mapSignal.set(
+        this.tileMapService.convertTo2DArray(
+          binaryData,
+          mapData.width,
+          mapData.height
+        )
+      );
     }
   }
 
   @HostListener('window:keydown', ['$event'])
   handleKeydown(event: KeyboardEvent) {
     const { x, y } = this.char();
+    const previousPosition = { x, y }; // To go back if needed
 
     let newX = x;
     let newY = y;
@@ -67,7 +80,24 @@ export class SpaceComponent {
       this.updateViewport(newX, newY);
 
       if (this.isAtDoor(newX, newY)) {
-        alert('Do you want to enter?');
+        Swal.fire({
+          title: 'Do you want to enter this room?',
+          text: "You'll get out of your current room!",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: "Yes, let's GO!",
+          cancelButtonText: 'No, stay here!',
+          reverseButtons: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // User confirmed: implement room entering logic here
+            console.log('Entering the room...');
+          } else {
+            // User canceled: revert to previous position
+            this.char.set(previousPosition); 
+            this.updateViewport(previousPosition.x, previousPosition.y);
+          }
+        });
       }
     }
   }
@@ -96,8 +126,14 @@ export class SpaceComponent {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    const newViewportX = Math.max(0, Math.min(this.mapWidth - viewportWidth, x - viewportWidth / 2));
-    const newViewportY = Math.max(0, Math.min(this.mapHeight - viewportHeight, y - viewportHeight / 2));
+    const newViewportX = Math.max(
+      0,
+      Math.min(this.mapWidth - viewportWidth, x - viewportWidth / 2)
+    );
+    const newViewportY = Math.max(
+      0,
+      Math.min(this.mapHeight - viewportHeight, y - viewportHeight / 2)
+    );
 
     this.viewportPosition.set({ x: newViewportX, y: newViewportY });
   }
