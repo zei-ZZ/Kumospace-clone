@@ -1,10 +1,10 @@
 <div class="chat-container">
   <div class="messages">
     <div *ngFor="let msg of messages" class="message">
-      <div class="avatar">{{ getInitials() }}</div>
+      <div class="avatar">{{ getInitials(msg.sender) }}</div>
       <div class="message-content">
-        <small class="username">{{ userName }}</small> 
-        <span class="message-text">{{ msg }}</span> 
+        <small class="username">{{ msg.sender }}</small> 
+        <span class="message-text">{{ msg.message }}</span> 
       </div>
     </div>
   </div>

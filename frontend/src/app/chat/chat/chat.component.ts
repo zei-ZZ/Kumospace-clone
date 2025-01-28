@@ -14,49 +14,43 @@ import  {jwtDecode} from 'jwt-decode';
   imports: [FormsModule, CommonModule],
 })
 export class ChatComponent implements OnInit {
-  messages: string[] = [];
+  messages: { message: string; sender: string }[] = []; // Modifiez la structure des messages
   messageText: string = '';
-  spaceKey: string='';
+  spaceKey: string = '';
   route: ActivatedRoute = inject(ActivatedRoute);
-  initials: string="";
-  userName: string="";
-   
+  initials: string = '';
+  userName: string = '';
+
   constructor(private chatService: ChatService) {}
 
   ngOnInit(): void {
-
     this.spaceKey = this.route.snapshot.paramMap.get('spaceKey')!;
-    console.log("i m rour space key",this.spaceKey)
-
     this.chatService.joinRoom(this.spaceKey);
-    this.extractUsernameFromToken()
-  
-    this.chatService.onReceiveMessage().subscribe((message: string) => {
-      this.messages.push(message); 
+    this.extractUsernameFromToken();
+
+    this.chatService.onReceiveMessage().subscribe((data: { message: string; sender: string }) => {
+      this.messages.push({ message: data.message, sender: data.sender }); 
     });
   }
+
   sendMessage(): void {
     if (this.messageText.trim()) {
-      this.chatService.sendMessage(this.spaceKey, this.messageText);
+      this.chatService.sendMessage(this.spaceKey, this.messageText, this.userName); 
       this.messageText = '';
     }
   }
+
   extractUsernameFromToken(): void {
-    const token = localStorage.getItem('access_token'); 
+    const token = localStorage.getItem('access_token');
     if (token) {
-      const decodedToken: any = jwtDecode(token); // Décoder le token
-      this.userName = decodedToken.username; // Extraire username
-      console.log(this.userName)
-    }
-  
+      const decodedToken: any = jwtDecode(token);
+      this.userName = decodedToken.username;
       this.initials = `${this.userName.charAt(0).toUpperCase()}`;
     }
-  
+  }
 
-  getInitials(): string {
-    return this.initials;
+  getInitials(sender: string): string {
+    console.log(sender)
+    return sender
   }
 }
-
-
-

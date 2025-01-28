@@ -18,16 +18,18 @@ export class ChatService {
   }
 
   // Envoyer un message à une room spécifique
-  sendMessage(spaceKey: string, message: string) {
-    this.socket.emit('sendMessage', { spaceKey, message });
+  sendMessage(spaceKey: string, message: string, sender: string) {
+    this.socket.emit('sendMessage', { spaceKey, message, sender });
   }
 
   // Écouter les messages reçus
-  onReceiveMessage(): Observable<string> {
-    return new Observable((observer) => {
-      this.socket.on('receiveMessage', (data: { message: string }) => {
-        observer.next(data.message); // Retourne uniquement la chaîne de caractères
-      });
+ // Écouter les messages reçus
+ onReceiveMessage(): Observable<{ message: string; sender: string }> {
+  return new Observable((observer) => {
+    this.socket.on('receiveMessage', (data: { message: string; sender: string }) => {
+      observer.next(data); // Retourne le message et le sender
     });
-  }
+  });
 }
+}
+
