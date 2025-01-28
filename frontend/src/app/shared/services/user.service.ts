@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { UserInterface } from '../models/user';
+import { UserDto } from '../models/user';
 import { Observable,  } from 'rxjs';
 import { environment } from '../../../environment';
 
@@ -16,10 +16,10 @@ export class UserService {
   }
 
   getUserById(id: string): Observable<any> {
-    return this.http.get<UserInterface>(`${this.apiUrl}/${id}`);
+    return this.http.get<UserDto>(`${this.apiUrl}/${id}`);
   }
 
-  getProfileImageUrl(user: UserInterface): string {
+  getProfileImageUrl(user: UserDto): string {
     const baseUrl = environment.apiUrl;
     if (user.imageProfile) {
       return `${baseUrl}/uploads/user/${user.imageProfile}`;

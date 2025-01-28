@@ -16,7 +16,7 @@ export class UserAuth {
   token: string = '';
 }
 
-export class UserInterface {
+export class UserDto {
   id: string = '';
   username: string = '';
   email: string = '';
