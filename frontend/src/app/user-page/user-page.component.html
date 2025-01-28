@@ -9,7 +9,7 @@
         <h1 class="first-name">Welcome back</h1>
         <h1 class="second-name">{{ user.username }}</h1>
         <h2>YOUR SPACES</h2>
-        <app-user-spaces></app-user-spaces>
+        <app-user-spaces [user]="user"></app-user-spaces>
       </section>
     </section>
     <section class="statistics">

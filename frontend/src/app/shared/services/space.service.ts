@@ -20,4 +20,8 @@ export class SpaceService {
   getSpaceByKey(key: string): Observable<any> {
     return this.http.get<SpaceDto>(`${this.apiUrl}/key/${key}`);
   }
+
+  getSpacesByUser(userId: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/user/${userId}`);
+  }
 }

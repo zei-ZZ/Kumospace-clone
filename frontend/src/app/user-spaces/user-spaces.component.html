@@ -6,14 +6,14 @@
           <div class="card-body">
             <h4 class="card-title">{{ space.name }}</h4>
             <div class="d-flex justify-content-between align-items-center">
-              <span class="badge bg-secondary">b908bd5c-7476-404b-a5c9-58fa24b8d255</span>
+              <span class="badge bg-secondary">{{ space.key }}</span>
             </div>
           </div>
         </div>
       </div>
     } @empty {
       <div class="col-12 text-center">
-        <p class="text-muted">No spaces available.</p>
+        <p class="text-muted"> You currently have no spaces. Once you create some, they will be added to this list.</p>
       </div>
     }
   </div>
