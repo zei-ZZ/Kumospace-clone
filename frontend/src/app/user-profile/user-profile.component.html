@@ -1,0 +1,25 @@
+<div class="cont">
+  <div class="profile-container">
+    <div id="card1" class="profile-card">
+      <div class="image-wrapper" (click)="fileInput.click()">
+        <img [src]="getProfileImageUrl()" alt="Profile photo">
+        <div class="overlay">
+          <span>Change Photo</span>
+        </div>
+        <input 
+          type="file" 
+          #fileInput 
+          (change)="onFileSelected($event)"
+          accept="image/*" 
+          style="display: none">
+      </div>     
+      <div class="options">
+        <div class="button-container" role="group" aria-label="Action Buttons">
+          <div class="scale-wrapper"></div>
+          <button class="button -regular" aria-label="Start the process">Create a space</button>
+          <button class="button -regular" aria-label="Start the process">Join with key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

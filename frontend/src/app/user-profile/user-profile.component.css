@@ -1,0 +1,155 @@
+.cont {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-container {
+  max-width: 940px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.profile-card {
+  max-width: 100%;
+  height: 400px;
+  font-size: 14px;
+}
+
+/* CARD 1 */
+#card1 {
+  text-align: center;
+  color: rgb(250, 250, 250);
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+#card1 .image-wrapper {
+  z-index: 100;
+  zoom: 1.4;
+  position: relative;
+  width: 100px;
+  height: 100px;
+  margin: 20px auto;
+  border-radius: 50%;
+  overflow: hidden;
+  background-size: cover;
+  background-repeat: no-repeat;
+  cursor: pointer;
+}
+
+#card1 .image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+#card1 .image-wrapper .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#card1 .image-wrapper .overlay span {
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+#card1 .image-wrapper:hover .overlay {
+  opacity: 1;
+}
+
+#card1 .options {
+  margin-top: 120px;
+  text-align: center;
+}
+
+.button-container {
+  display: flex;
+  margin: 60px auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.button {
+  font-family: 'Nunito', sans-serif;
+  display: flex;
+  overflow: hidden;
+  z-index: 100;
+  zoom: 1.2;
+  margin: 10px;
+  padding: 12px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 150ms linear;
+  text-align: center;
+  white-space: nowrap;
+  text-decoration: none !important;
+  text-transform: capitalize;
+  color: #fff;
+  border: 0 none;
+  border-radius: 36px;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 1.3;
+  -webkit-appearance: none;
+  appearance: none;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 160px;
+  box-shadow: 2px 5px 10px #e4e4e4;
+}
+
+.button:hover {
+  transition: all 150ms linear;
+  opacity: .85;
+}
+
+.button:active {
+  transition: all 150ms linear;
+  opacity: .75;
+}
+
+.button:focus {
+  outline: 1px dotted #959595;
+  outline-offset: -4px;
+}
+
+.button.-regular {
+  color: #202129;
+  background-color: #f2f2f2;
+}
+
+.button.-regular:hover {
+  color: #202129;
+  background-color: #e1e2e2;
+  opacity: 1;
+}
+
+.button.-regular:active {
+  background-color: #d5d6d6;
+  opacity: 1;
+}
+
+.button.-dark {
+  color: #FFFFFF;
+  background: #161616;
+}
+
+.button.-dark:focus {
+  outline: 1px dotted white;
+  outline-offset: -4px;
+}
