@@ -6,10 +6,10 @@
 
 <div>
   <h3>Local Video</h3>
-  <app-video-player
+  <app-user-avatar
     [stream]="localStream | async"
     [muted]="true"
-  ></app-video-player>
+  ></app-user-avatar>
 </div>
 
 <div>
@@ -17,10 +17,10 @@
   <div class="video-container">
     @for (remoteStream of remoteStreams$ | async | keyvalue; track
     remoteStream.key) {
-    <app-video-player
+    <app-user-avatar
       [stream]="remoteStream.value"
       [muted]="true"
-    ></app-video-player>
+    ></app-user-avatar>
     }
   </div>
 </div>

@@ -1,12 +1,12 @@
 import { Component, input } from '@angular/core';
 
 @Component({
-  selector: 'app-video-player',
+  selector: 'app-user-avatar',
   imports: [],
-  templateUrl: './video-player.component.html',
-  styleUrl: './video-player.component.css',
+  templateUrl: './user-avatar.component.html',
+  styleUrl: './user-avatar.component.css',
 })
-export class VideoPlayerComponent {
+export class UserAvatarComponent {
   stream = input<MediaStream | null>(null);
   muted = input<boolean>(false);
 }

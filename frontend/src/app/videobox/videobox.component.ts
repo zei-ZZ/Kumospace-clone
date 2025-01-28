@@ -9,12 +9,12 @@ import {
 import { Observable } from 'rxjs';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { WebrtcService } from '../webrtc/webrtc.service';
-import { VideoPlayerComponent } from '../video-player/video-player.component';
+import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 
 @Component({
   selector: 'app-videobox',
   standalone: true,
-  imports: [CommonModule, AsyncPipe, VideoPlayerComponent],
+  imports: [CommonModule, AsyncPipe, UserAvatarComponent],
   templateUrl: './videobox.component.html',
   styleUrls: ['./videobox.component.css'],
 })
