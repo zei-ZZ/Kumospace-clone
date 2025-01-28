@@ -1,19 +1,17 @@
 <div class="chat-container">
-    <h3>Chat in Space </h3>
-  
-    <div class="messages" style="height: 300px; overflow-y: scroll; border: 1px solid #ccc; margin-bottom: 10px;">
-      <div *ngFor="let msg of messages">
-        <strong>User {{ msg.userId }}: </strong>{{ msg.message }}
-      </div>
+  <div class="messages">
+    <div *ngFor="let msg of messages" class="message">
+      <span>{{ msg }}</span>
     </div>
-  
+  </div>
+
+  <div class="input-container">
     <input
       type="text"
-      [(ngModel)]="message"
-      placeholder="Type your message"
+      [(ngModel)]="newMessage"
+      placeholder="Écris un message..."
       (keyup.enter)="sendMessage()"
-      style="width: 100%; padding: 10px; margin-bottom: 10px;"
     />
-    <button (click)="sendMessage()" style="width: 100%; padding: 10px;">Send</button>
+    <button (click)="sendMessage()">Envoyer</button>
   </div>
-  
+</div>

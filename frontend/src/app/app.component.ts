@@ -9,5 +9,5 @@ import { ChatComponent } from "./chat/chat/chat.component";
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'frontend';
+  title = 'Kumospace';
 }

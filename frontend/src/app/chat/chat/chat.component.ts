@@ -1,34 +1,23 @@
-// chat.component.ts (Frontend)
-
-import { Component, OnInit } from '@angular/core';
-import { ChatService } from '../chat.service';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-chat',
-  standalone : true,
-  imports :[FormsModule],
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css']
+  styleUrls: ['./chat.component.css'],
+  standalone: true, 
+  imports: [FormsModule,CommonModule] 
 })
-export class ChatComponent implements OnInit {
-  message: string = '';
-  messages: string[] = [];
+export class ChatComponent {
+  messages: string[] = []; 
+  newMessage: string = ''; 
 
-  constructor(private chatService: ChatService) {}
-
-  ngOnInit(): void {
-    // Récupère les messages en temps réel
-    this.chatService.messages$.subscribe((messages) => {
-      this.messages = messages;
-    });
-  }
-
-  // Envoie le message
-  sendMessage(): void {
-    if (this.message.trim()) {
-      this.chatService.sendMessage(this.message);
-      this.message = ''; // Réinitialise le champ de message
+  sendMessage() {
+    if (this.newMessage.trim()) {
+      this.messages = [...this.messages, this.newMessage];  
+      this.newMessage = '';
     }
   }
+  
 }
