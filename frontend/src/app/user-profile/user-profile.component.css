@@ -5,13 +5,13 @@
   padding: 0;
 }
 
-.container {
+.profile-container {
   max-width: 940px;
   width: 100%;
   margin: 0 auto;
 }
 
-.card {
+.profile-card {
   max-width: 100%;
   height: 400px;
   font-size: 14px;

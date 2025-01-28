@@ -23,8 +23,8 @@ export class AuthService {
    private checkInitialAuth() {
     const userId = this.storageService.getItem(STORAGE_KEYS.USER_ID);
     const token = this.storageService.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-    if (userId && token) {
-      this.validateToken(token).subscribe();
+    if (token && userId) {
+      this.isAuthenticated.set({ id: userId, token });
     }
   }
 

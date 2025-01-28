@@ -24,7 +24,7 @@ export class UserService {
     if (user.imageProfile) {
       return `${baseUrl}/uploads/user/${user.imageProfile}`;
     } else {
-      return `${baseUrl}/uploads/user/default.jpg`;
+      return `${baseUrl}/assets/default.jpg`;
     }
   }
 
