@@ -8,6 +8,28 @@
   border-radius: 8px;
   padding: 10px;
   background-color: #f9f9f9;
+  
+  
+}
+
+
+.chat-container.hidden {
+  transform: translateX(-100%);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #2982e1;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .messages {
@@ -24,8 +46,10 @@
 .message {
   margin: 5px 0;
   padding: 5px 10px;
+  display: flex;
   border-radius: 5px;
   background-color: #e6f7ff;
+  align-items: center;
 }
 
 .input-container {
@@ -51,4 +75,10 @@ button {
 
 button:hover {
   background-color: #0056b3;
+}
+.username {
+  display: block; 
+  font-size: 12px; 
+  color: #888; 
+  margin-bottom: 2px; 
 }
