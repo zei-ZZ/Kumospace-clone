@@ -1,30 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
   private socket: Socket;
+  private messagesSubject: BehaviorSubject<{ userId: string, message: string }[]> = new BehaviorSubject<{ userId: string, message: string }[]>([]);
+  messages$ = this.messagesSubject.asObservable();
 
   constructor() {
-    // Connectez-vous au serveur WebSocket
     this.socket = io('http://localhost:3000'); 
-  }
 
-  // Envoyer un message
-  sendMessage(message: string): void {
-    const userId = '123';
-    this.socket.emit('sendMessage', { message, userId });
-  }
-
-  // Écouter les messages du serveur
-  receiveMessage(): Observable<string> {
-    return new Observable<string>((observer) => {
-      this.socket.on('receiveMessage', (data: { message: string }) => {
-        observer.next(data.message); // Diffuse uniquement le contenu du message
-      });
+    // Réception des messages en temps réel
+    this.socket.on('receiveMessage', (data: { userId: string, message: string }) => {
+      const currentMessages = this.messagesSubject.value;
+      this.messagesSubject.next([...currentMessages, data]);
     });
+  }
+
+  // Envoyer un message 
+  sendMessage(userId: string, message: string): void {
+    // Vérifie si l'ID utilisateur est valide
+    if (userId !== '50fc50f3-43a4-44b6-9b92-20ad6ddb017b' && userId !== 'b3e219f3-47ec-45ba-a697-43b448b4e4a0') {
+      console.error('Utilisateur inconnu');
+      return;
+    }
+    this.socket.emit('sendMessage', { userId, message });
+  }
+
+  joinRoom(userId: string): void {
+    if (userId === '50fc50f3-43a4-44b6-9b92-20ad6ddb017b' || userId === 'b3e219f3-47ec-45ba-a697-43b448b4e4a0') {
+      this.socket.emit('joinRoom', userId);
+    } else {
+      console.error('Utilisateur inconnu');
+    }
   }
 }
