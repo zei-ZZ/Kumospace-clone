@@ -3,10 +3,11 @@ import { UserProfileComponent } from "../user-profile/user-profile.component";
 import { UserDto } from '../shared/models/user';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/services/user.service';
+import { UserSpacesComponent } from "../user-spaces/user-spaces.component";
 
 @Component({
   selector: 'app-user-page',
-  imports: [UserProfileComponent],
+  imports: [UserProfileComponent, UserSpacesComponent],
   templateUrl: './user-page.component.html',
   styleUrl: './user-page.component.css'
 })
