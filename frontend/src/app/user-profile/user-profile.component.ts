@@ -5,7 +5,7 @@ import { catchError, firstValueFrom, Observable, of, tap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { SpaceService } from '../shared/services/space.service';
 import { SpaceDto } from '../shared/models/space';
-import { showCreateSpacePopup } from '../shared/utils';
+import { showCreateSpacePopup, showJoinSpacePopup } from '../shared/utils';
 import { Router } from '@angular/router';
 
 @Component({
@@ -83,5 +83,34 @@ export class UserProfileComponent {
         return of(null);
       })
     );
+  }
+
+  joinWithKey(): void {
+    showJoinSpacePopup().then(key => {
+      if (key) {
+        this.spaceService.getSpaceByKey(key).pipe(
+          tap(space => {
+            if (space) {
+              this.router.navigate([`/layout/${key}`]);
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Space Not Found',
+                text: 'No space found with the provided key.',
+              });
+            }
+          }),
+          catchError(error => {
+            console.error('Error fetching space:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'There was an error fetching the space. Please try again.',
+            });
+            return of(null);
+          })
+        ).subscribe();
+      }
+    });
   }
 }

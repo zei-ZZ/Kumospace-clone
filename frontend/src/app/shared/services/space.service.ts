@@ -16,4 +16,8 @@ export class SpaceService {
   createSpace(space: SpaceDto, userId: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}`, { space, userId });
   }
+
+  getSpaceByKey(key: string): Observable<any> {
+    return this.http.get<SpaceDto>(`${this.apiUrl}/key/${key}`);
+  }
 }
