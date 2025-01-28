@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ImageModule } from 'primeng/image';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-navbar',
   imports: [],
@@ -7,4 +7,9 @@ import { ImageModule } from 'primeng/image';
   styleUrl: './navbar.component.css',
   standalone: true ,
 })
-export class NavbarComponent {}
+export class NavbarComponent {
+  constructor(private router: Router) {}
+  ToAuth(): void {
+    this.router.navigate(['/auth']);
+  }
+}
