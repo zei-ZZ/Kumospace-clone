@@ -7,24 +7,26 @@ import { Observable } from 'rxjs';
 })
 export class ChatService {
   private socket: Socket;
-  private readonly room = 'defaultRoom'; 
 
   constructor() {
     this.socket = io('http://localhost:3000'); 
-
-    this.socket.emit('joinRoom', this.room);
   }
 
-  // Envoyer un message
-  sendMessage(message: string) {
-    this.socket.emit('sendMessage', message);
+  // Rejoindre une room basée sur le spaceKey
+  joinRoom(spaceKey: string) {
+    this.socket.emit('joinRoom', spaceKey);
+  }
+
+  // Envoyer un message à une room spécifique
+  sendMessage(spaceKey: string, message: string) {
+    this.socket.emit('sendMessage', { spaceKey, message });
   }
 
   // Écouter les messages reçus
   onReceiveMessage(): Observable<string> {
     return new Observable((observer) => {
       this.socket.on('receiveMessage', (data: { message: string }) => {
-        observer.next(data.message);
+        observer.next(data.message); // Retourne uniquement la chaîne de caractères
       });
     });
   }
