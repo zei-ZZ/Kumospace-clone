@@ -1,3 +1,4 @@
+
 <div class="chat-container">
   <div class="messages">
     <div *ngFor="let msg of messages" class="message">
@@ -5,13 +6,19 @@
     </div>
   </div>
 
+
   <div class="input-container">
     <input
       type="text"
-      [(ngModel)]="newMessage"
+      [(ngModel)]="messageText"
       placeholder="Écris un message..."
       (keyup.enter)="sendMessage()"
     />
     <button (click)="sendMessage()">Envoyer</button>
   </div>
 </div>
+
+
+
+
+

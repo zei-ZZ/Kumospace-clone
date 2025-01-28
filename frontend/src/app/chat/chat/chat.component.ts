@@ -1,34 +1,35 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from '../chat.service';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
-  imports:[FormsModule,CommonModule]
+  imports : [CommonModule,FormsModule]
 })
 export class ChatComponent implements OnInit {
-  messages: { userId: string, message: string }[] = [];
-  newMessage: string = '';
-  userId: string = '50fc50f3-43a4-44b6-9b92-20ad6ddb017b'; 
+  messages: { userId: string; message: string }[] = [];
+  roomId: string = 'room1'; // Statique
+  messageText: string = '';
 
   constructor(private chatService: ChatService) {}
 
-  ngOnInit(): void {
-    this.chatService.joinRoom(this.userId);
+  ngOnInit() {
+    // Rejoindre une room à l'initialisation
+    this.chatService.joinRoom(this.roomId);
 
-    // Écouter les messages entrants
+    // Observer les messages
     this.chatService.messages$.subscribe((messages) => {
       this.messages = messages;
     });
   }
 
   sendMessage() {
-    if (this.newMessage.trim()) {
-      this.chatService.sendMessage(this.userId, this.newMessage);
-      this.newMessage = ''; 
+    if (this.messageText) {
+      this.chatService.sendMessage(this.roomId, this.messageText);
+      this.messageText = ''; // Réinitialiser après l'envoi
     }
   }
 }
