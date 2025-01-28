@@ -1,69 +1,41 @@
-import { WebSocketGateway, SubscribeMessage, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import {
+  WebSocketGateway,
+  WebSocketServer,
+  SubscribeMessage,
+  MessageBody,
+  ConnectedSocket,
+} from '@nestjs/websockets';
+
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({
-  cors: {
-    origin: "*", 
-  },
-})
-export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+@WebSocketGateway({ cors: true }) 
+
+export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  private users = new Map<string, Socket>();
+  private readonly room = 'defaultRoom';
 
-  // Méthode appelée lors de la connexion
-  handleConnection(client: Socket) {
-    console.log(`User connected: ${client.id}`);
-    this.users.set(client.id, client);
+  // Lorsqu'un client se connecte
+  handleConnection(@ConnectedSocket() client: Socket) {
+    console.log(`Client connected: ${client.id}`);
+    // Rejoindre la room dès la connexion
+    client.join(this.room);
+    console.log(`Client ${client.id} joined room ${this.room}`);
   }
 
-  // Méthode appelée lors de la déconnexion
-  handleDisconnect(client: Socket) {
-    console.log(`User disconnected: ${client.id}`);
-    this.users.delete(client.id);
+  // Lorsqu'un client se déconnecte
+  handleDisconnect(@ConnectedSocket() client: Socket) {
+    console.log(`Client disconnected: ${client.id}`);
   }
 
-  // Méthode pour rejoindre une room
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(client: Socket, roomId: string): void {
-    console.log(`${client.id} joining room: ${roomId}`);
-    client.join(roomId);
-    this.server.to(roomId).emit('message', `${client.id} a rejoint la room ${roomId}`);
-  }
-
-  // Méthode pour envoyer un message dans une room
+  // Envoyer un message à la room
   @SubscribeMessage('sendMessage')
-handleMessage(client: Socket, payload: { roomId: string, message: string }): void {
-  console.log('Message received:', payload); // Ajouter ce log pour vérifier
-  this.server.to(payload.roomId).emit('message', {
-    userId: client.id,
-    message: payload.message,
-  });
-}
-
-
-  // Méthode pour quitter une room
-  @SubscribeMessage('leaveRoom')
-  handleLeaveRoom(client: Socket, roomId: string): void {
-    console.log(`${client.id} leaving room: ${roomId}`);
-    client.leave(roomId);
-    this.server.to(roomId).emit('message', `${client.id} a quitté la room ${roomId}`);
-  }
-
-  // Méthode pour envoyer un message à un utilisateur spécifique
-  @SubscribeMessage('sendToUser')
-  handleSendToUser(client: Socket, payload: { userId: string, message: string }) {
-    const targetClient = this.users.get(payload.userId);
-    if (targetClient) {
-      targetClient.emit('message', {
-        userId: client.id,
-        message: payload.message,
-      });
-    }
-  }
-
-  afterInit(server: Server) {
-    console.log('WebSocket server initialized');
+  handleSendMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() message: string,
+  ) {
+    this.server.to(this.room).emit('receiveMessage', { message });
+    console.log(`Message sent to room ${this.room}: ${message}`);
   }
 }
