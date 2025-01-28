@@ -1,13 +1,17 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, HostListener, signal, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import * as mapData from '../../assets/kumo.json';
+import { WebSocketService } from './websocket.service';
 
 @Component({
   selector: 'app-space',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './space.component.html',
-  styleUrl: './space.component.css',
+  styleUrls: ['./space.component.css'],
 })
-export class SpaceComponent {
+export class SpaceComponent implements OnInit, OnDestroy {
+  private movementInterval: any;
 
   mapWidth = 1680;
   mapHeight = 1200;
@@ -15,11 +19,21 @@ export class SpaceComponent {
 
   char = signal({ x: 200, y: 200 });
   viewportPosition = signal({ x: 0, y: 0 });
-
   collisionMap = signal<number[][]>([]);
 
+  constructor(private webSocketService: WebSocketService) {}
+
   ngOnInit() {
+    this.webSocketService.connect();
+    this.startSendingCoordinates();
     this.loadCollisionMap();
+  }
+
+  private startSendingCoordinates(): void {
+    this.movementInterval = setInterval(() => {
+      const coordinates = this.char();
+      this.webSocketService.sendCoordinates(coordinates);
+    }, 500); // Update every 500ms
   }
 
   loadCollisionMap() {
@@ -31,23 +45,10 @@ export class SpaceComponent {
     }
   }
 
-  /**
-   * Convert raw collision layer data to binary
-   * rawData = Flat array from the collision layer
-   * result = Binary array (1 for obstacles, 0 for walkable areas)
-   * Convert non-zero to 1
-   */
   processCollisionLayer(rawData: number[]): number[] {
-    return rawData.map((tile) => (tile === 0 ? 0 : 1)); 
+    return rawData.map((tile) => (tile === 0 ? 0 : 1));
   }
 
-  /**
-   * Convert a flat array to a 2D array
-   * data = Binary flat array
-   * width = Map width in tiles
-   * height = Map height in tiles
-   * result = 2D array representing the collision map
-   */
   convertTo2DArray(data: number[], width: number, height: number): number[][] {
     const result: number[][] = [];
     for (let row = 0; row < height; row++) {
@@ -86,7 +87,6 @@ export class SpaceComponent {
     }
   }
 
-  // Checking if the tile is walkable
   isWalkable(x: number, y: number): boolean {
     const tileX = Math.floor(x / this.tileSize);
     const tileY = Math.floor(y / this.tileSize);
@@ -96,11 +96,10 @@ export class SpaceComponent {
       y >= 0 &&
       x < this.mapWidth &&
       y < this.mapHeight &&
-      this.collisionMap()[tileY]?.[tileX] === 0 
+      this.collisionMap()[tileY]?.[tileX] === 0
     );
   }
 
-  // Adjust the viewport to follow the character
   updateViewport(x: number, y: number) {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
@@ -109,5 +108,10 @@ export class SpaceComponent {
     const newViewportY = Math.max(0, Math.min(this.mapHeight - viewportHeight, y - viewportHeight / 2));
 
     this.viewportPosition.set({ x: newViewportX, y: newViewportY });
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.movementInterval);
+    this.webSocketService.disconnect();
   }
 }
