@@ -27,6 +27,8 @@ export class ChatService {
  onReceiveMessage(): Observable<{ message: string; sender: string }> {
   return new Observable((observer) => {
     this.socket.on('receiveMessage', (data: { message: string; sender: string }) => {
+      console.log('Message received:', data); // Log ici
+
       observer.next(data); // Retourne le message et le sender
     });
   });

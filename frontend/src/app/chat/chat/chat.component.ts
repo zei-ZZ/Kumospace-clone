@@ -36,6 +36,7 @@ export class ChatComponent implements OnInit {
   sendMessage(): void {
     if (this.messageText.trim()) {
       this.chatService.sendMessage(this.spaceKey, this.messageText, this.userName); 
+      console.log(this.userName)
       this.messageText = '';
     }
   }
@@ -50,7 +51,6 @@ export class ChatComponent implements OnInit {
   }
 
   getInitials(sender: string): string {
-    console.log(sender)
     return sender
   }
 }
