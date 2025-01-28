@@ -6,8 +6,9 @@ import { VideoboxComponent } from './videobox/videobox.component';
   selector: 'app-root',
   imports: [RouterOutlet , VideoboxComponent],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrl: './app.component.css',
+  standalone: true,
 })
 export class AppComponent {
-  title = 'frontend';
+  title = 'Roomeet';
 }

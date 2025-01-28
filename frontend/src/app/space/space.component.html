@@ -1,0 +1,12 @@
+<div
+  class="space-container"
+  [style.background-position]="
+    '-' + viewportPosition().x + 'px -' + viewportPosition().y + 'px'
+  "
+>
+  <div
+    class="character"
+    [style.left.px]="char().x"
+    [style.top.px]="char().y"
+  ></div>
+</div>
