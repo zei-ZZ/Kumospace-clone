@@ -58,7 +58,7 @@ export class AuthComponent {
           Swal.fire({
             icon: 'error',
             title: 'Login Failed',
-            text: error.error.message || 'An error occurred during login.',
+            text: 'An error occurred during login.',
           });
         },
       });

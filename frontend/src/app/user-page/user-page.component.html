@@ -3,7 +3,7 @@
     <div class="profile-bg"></div>
     <section class="container">
       <aside class="profile-image">
-        <app-user-profile [user]="user"></app-user-profile>
+        <app-user-profile [user]="user" (userUpdated)="onUserUpdated($event)"></app-user-profile>
       </aside>
       <section class="profile-info">
         <h1 class="first-name">Welcome back !</h1>

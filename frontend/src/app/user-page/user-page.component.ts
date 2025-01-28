@@ -24,14 +24,23 @@ export class UserPageComponent {
 
   getUserById(id: string): void {
      this.userService.getUserById(id).subscribe(response => {
-       this.user = {
-        id: response.id,
-        username: response.username,
-        email: response.email,
-        imageProfile: response.ImageProfile,
-        spaces: response.spaces
-      };
+      this.updateUserData(response);
       this.cdr.detectChanges();
      });
+  }
+
+  updateUserData(userData: any): void {
+    this.user = {
+      id: userData.id,
+      username: userData.username,
+      email: userData.email,
+      imageProfile: userData.ImageProfile,
+      spaces: userData.spaces
+    };
+    this.cdr.detectChanges();
+  }
+
+  onUserUpdated(updatedUser: UserInterface): void {
+    this.updateUserData(updatedUser);
   }
 }
