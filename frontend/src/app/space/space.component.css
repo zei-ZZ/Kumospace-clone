@@ -1,34 +1,26 @@
-.game-container {
+.space-container {
+    position: relative;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    position: relative;
-  }
-  
-  .game-world {
-    position: relative;
-    background: #000;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr));
-  }
-  
-  .tile {
-    display: inline-block;
-    box-sizing: border-box;
-    border: 1px solid #555;
-  }
-  
-  .tile.wall {
-    background-color: #333;
-  }
-  
-  .tile.walkable {
-    background-color: #eee;
+    background-image: url('../../assets/office.png'); 
+    background-size: cover;
+    background-repeat: no-repeat;
+    image-rendering: pixelated;
   }
   
   .character {
     position: absolute;
+    width: 32px;
+    height: 32px;
     background-color: red;
-    border-radius: 50%;
+    border-radius: 20%;
+  }
+  
+  @media (max-width: 768px) {
+    .character {
+      width: 24px;
+      height: 24px;
+    }
   }
   
