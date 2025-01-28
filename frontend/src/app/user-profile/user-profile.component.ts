@@ -1,8 +1,12 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
-import { UserInterface } from '../shared/models/user';
+import { UserDto } from '../shared/models/user';
 import { UserService } from '../shared/services/user.service';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom, Observable, of, tap } from 'rxjs';
 import Swal from 'sweetalert2';
+import { SpaceService } from '../shared/services/space.service';
+import { SpaceDto } from '../shared/models/space';
+import { showCreateSpacePopup, showJoinSpacePopup } from '../shared/utils';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
@@ -12,8 +16,11 @@ import Swal from 'sweetalert2';
 })
 export class UserProfileComponent {
   userService = inject(UserService);
-  @Input() user!: UserInterface;
-  @Output() userUpdated = new EventEmitter<UserInterface>();
+  spaceService = inject(SpaceService);
+  router = inject(Router);
+
+  @Input() user!: UserDto;
+  @Output() userUpdated = new EventEmitter<UserDto>();
 
 
   getProfileImageUrl(): string {
@@ -44,5 +51,66 @@ export class UserProfileComponent {
         text: 'There was an error uploading your profile photo. Please try again.',
       });
     }
+  }
+
+  createSpace(): void {
+    showCreateSpacePopup().then(formValues => {
+      if (formValues) {
+        const [name, capacity] = formValues;
+        const space: SpaceDto = { name, capacity: parseInt(capacity, 10) };
+        this.submitCreateSpace(space).subscribe();
+      }
+    });
+  }
+
+  private submitCreateSpace(space: SpaceDto): Observable<void | null> {
+    return this.spaceService.createSpace(space, this.user.id).pipe(
+      tap(response => {
+        Swal.fire({
+          icon: 'success',
+          title: 'Space Created',
+          text: 'The space has been created successfully!',
+        });
+        this.router.navigate([`/layout/${response.key}`]);
+      }),
+      catchError(error => {
+        console.error('Error creating space:', error);
+        Swal.fire({
+          icon: 'error',
+          title: 'Creation Failed',
+          text: 'There was an error creating the space. Please try again.',
+        });
+        return of(null);
+      })
+    );
+  }
+
+  joinWithKey(): void {
+    showJoinSpacePopup().then(key => {
+      if (key) {
+        this.spaceService.getSpaceByKey(key).pipe(
+          tap(space => {
+            if (space) {
+              this.router.navigate([`/layout/${key}`]);
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Space Not Found',
+                text: 'No space found with the provided key.',
+              });
+            }
+          }),
+          catchError(error => {
+            console.error('Error fetching space:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'There was an error fetching the space. Please try again.',
+            });
+            return of(null);
+          })
+        ).subscribe();
+      }
+    });
   }
 }
