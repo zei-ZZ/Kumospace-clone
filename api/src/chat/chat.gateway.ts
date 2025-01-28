@@ -1,37 +1,44 @@
-import { WebSocketGateway,
-         SubscribeMessage,
-         MessageBody, 
-         OnGatewayInit,
-         OnGatewayConnection,
-         OnGatewayDisconnect,
-         WebSocketServer 
-        } from '@nestjs/websockets';
-        
+import { WebSocketGateway, SubscribeMessage, MessageBody, ConnectedSocket, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway()  //c'est notre  WebSocket Gateway
-export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+@WebSocketGateway({
+  cors: {
+    origin: "*", // CORS pour permettre les connexions depuis n'importe quelle origine
+  },
+})
+export class ChatGateway {
   @WebSocketServer() server: Server;
 
-  // Cette méthode est appelée lorsque le serveur WebSocket est initialisé
-  afterInit() {
-    console.log('Serveur WebSocket initialisé');
-  }
+  private static readonly userIds = [
+    '50fc50f3-43a4-44b6-9b92-20ad6ddb017b',
+    'b3e219f3-47ec-45ba-a697-43b448b4e4a0',
+  ];
 
-  // Cette méthode est appelée lorsqu'un client se connecte
-  handleConnection(client: Socket) {
-    console.log(`Client connecté : ${client.id}`);
-  }
+  private users = new Map(); 
 
-  // Cette méthode est appelée lorsqu'un client se déconnecte
-  handleDisconnect(client: Socket) {
-    console.log(`Client déconnecté : ${client.id}`);
-  }
-
-  // Cette méthode reçoit les messages du client
   @SubscribeMessage('sendMessage')
-  handleMessage(@MessageBody() message: string): void {
-    console.log(`Message reçu: ${message}`);
-    this.server.emit('receiveMessage', message);  // Émet à tous les clients connectés
+  handleMessage(@MessageBody() data: { userId: string, message: string }, @ConnectedSocket() socket: Socket): void {
+    const { userId, message } = data;
+    
+    // Vérifie si l'ID utilisateur est valide 
+    if (!ChatGateway.userIds.includes(userId)) {
+      socket.emit('error', 'Utilisateur inconnu');
+      return;
+    }
+
+    // Envoie le message à tous les autres utilisateurs sauf celui qui l'a envoyé
+    socket.broadcast.emit('receiveMessage', { userId, message });
+  }
+
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(@MessageBody() userId: string, @ConnectedSocket() socket: Socket): void {
+    // Vérifie si l'ID utilisateur est valide
+    if (!ChatGateway.userIds.includes(userId)) {
+      socket.emit('error', 'Utilisateur inconnu');
+      return;
+    }
+
+    this.users.set(userId, socket);
+    socket.join(userId); // Le client rejoint la "room" correspondant à son ID utilisateur
   }
 }
