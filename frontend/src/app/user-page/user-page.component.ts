@@ -1,12 +1,13 @@
 import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { UserProfileComponent } from "../user-profile/user-profile.component";
-import { UserInterface } from '../shared/models/user';
+import { UserDto } from '../shared/models/user';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../shared/services/user.service';
+import { UserSpacesComponent } from "../user-spaces/user-spaces.component";
 
 @Component({
   selector: 'app-user-page',
-  imports: [UserProfileComponent],
+  imports: [UserProfileComponent, UserSpacesComponent],
   templateUrl: './user-page.component.html',
   styleUrl: './user-page.component.css'
 })
@@ -15,7 +16,7 @@ export class UserPageComponent {
   userService = inject(UserService);
   cdr = inject(ChangeDetectorRef);
 
-  user: UserInterface = new UserInterface();
+  user: UserDto = new UserDto();
  
   ngOnInit(): void {
     const userId = this.route.snapshot.paramMap.get('userid');
@@ -40,7 +41,7 @@ export class UserPageComponent {
     this.cdr.detectChanges();
   }
 
-  onUserUpdated(updatedUser: UserInterface): void {
+  onUserUpdated(updatedUser: UserDto): void {
     this.updateUserData(updatedUser);
   }
 }

@@ -4,8 +4,9 @@ import { UserPageComponent } from './user-page/user-page.component';
 import { authGuard } from './shared/guards/auth.guard';
 import { LayoutComponent } from './layout/layout.component';
 import { ChatComponent } from './chat/chat/chat.component';
-
+import {LandingPageComponent} from './landing-page/landing-page.component';
 export const routes: Routes = [
+  { path: '', component: LandingPageComponent },
   {
     path: 'auth',
     component: AuthComponent,
