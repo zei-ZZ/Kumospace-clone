@@ -1,0 +1,63 @@
+.container {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  min-height: 200px;
+  min-width: 800px;
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+.card {
+  width: 100%;
+  min-width: 300px; /* Ensures minimum width for readability */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+.card-title {
+  color: #2634DF;
+  margin-bottom: 1rem;
+}
+
+.space-key {
+  margin: 1rem 0;
+}
+
+.space-key .badge {
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  word-wrap: break-word;
+  white-space: normal;
+  height: auto;
+  line-height: 1.5;
+}
+
+/* Ensure consistent card widths within a row */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.col {
+  display: flex;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    min-width: 100%;
+  }
+  
+  .card-body {
+    padding: 1rem;
+  }
+}
