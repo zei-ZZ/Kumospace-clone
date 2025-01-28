@@ -16,12 +16,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
+    path:'chat',
+    component : ChatComponent,
+  },
+  {
     path: 'layout/:spaceKey',
     component: LayoutComponent,
     // canActivate: [authGuard]
   },
-  {
-    path:'chat',
-    component : ChatComponent,
-  },
+
 ];

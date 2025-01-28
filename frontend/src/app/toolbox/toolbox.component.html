@@ -18,6 +18,8 @@
     <button
       class="w-12 h-12 rounded-full bg-gray-500 bg-opacity-90 flex items-center justify-center text-white hover:bg-gray-400"
       aria-label="Chat"
+      (click)="toggleChat()"
+
     >
       <ng-icon class="icon" name="heroChatBubbleLeftRight" />
     </button>
@@ -28,4 +30,7 @@
       <ng-icon class="icon" name="heroArrowRightStartOnRectangle" />
     </button>
   </div>
+
+  <app-chat *ngIf="isChatOpen"></app-chat>
+
 </div>
