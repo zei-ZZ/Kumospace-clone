@@ -7,29 +7,26 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
-  imports : [CommonModule,FormsModule]
+  imports:[FormsModule,CommonModule]
 })
 export class ChatComponent implements OnInit {
-  messages: { userId: string; message: string }[] = [];
-  roomId: string = 'room1'; // Statique
+  messages: string[] = [];
   messageText: string = '';
 
   constructor(private chatService: ChatService) {}
 
-  ngOnInit() {
-    // Rejoindre une room à l'initialisation
-    this.chatService.joinRoom(this.roomId);
-
-    // Observer les messages
-    this.chatService.messages$.subscribe((messages) => {
-      this.messages = messages;
+  ngOnInit(): void {
+    // Écouter les messages reçus depuis les clients (sokcets) qui sont dans la meme room
+    this.chatService.onReceiveMessage().subscribe((message: string) => {
+      this.messages.push(message);
     });
   }
 
-  sendMessage() {
-    if (this.messageText) {
-      this.chatService.sendMessage(this.roomId, this.messageText);
-      this.messageText = ''; // Réinitialiser après l'envoi
+  // Envoyer un message
+  sendMessage(): void {
+    if (this.messageText.trim()) {
+      this.chatService.sendMessage(this.messageText);
+      this.messageText = '';
     }
   }
 }

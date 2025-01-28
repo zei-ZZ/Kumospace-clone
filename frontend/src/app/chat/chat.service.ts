@@ -1,49 +1,31 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChatService {
   private socket: Socket;
-  private messageSubject = new BehaviorSubject<{ userId: string; message: string }[]>([]);
-  public messages$ = this.messageSubject.asObservable();
-
+  private readonly room = 'defaultRoom'; 
 
   constructor() {
-    this.socket = io('http://localhost:3000');
-  
-    // Vérification de la connexion
-  this.socket.on('connect', () => {
-    console.log('Connected to the WebSocket server');
-  });
+    this.socket = io('http://localhost:3000'); 
 
-  this.socket.on('message', (data: { userId: string; message: string }) => {
-    console.log('Received message:', data); // Log pour vérifier si le message est bien reçu
-    const currentMessages = this.messageSubject.value;
-    this.messageSubject.next([...currentMessages, data]);
-  });
-  
+    this.socket.emit('joinRoom', this.room);
   }
 
-  // Rejoindre une room
-  joinRoom(roomId: string): void {
-    this.socket.emit('joinRoom', roomId);
+  // Envoyer un message
+  sendMessage(message: string) {
+    this.socket.emit('sendMessage', message);
   }
 
-  // Quitter une room
-  leaveRoom(roomId: string): void {
-    this.socket.emit('leaveRoom', roomId);
-  }
-
-  // Envoyer un message dans une room
-  sendMessage(roomId: string, message: string): void {
-    this.socket.emit('sendMessage', { roomId, message });
-  }
-
-  // Envoyer un message à un utilisateur spécifique
-  sendToUser(userId: string, message: string): void {
-    this.socket.emit('sendToUser', { userId, message });
+  // Écouter les messages reçus
+  onReceiveMessage(): Observable<string> {
+    return new Observable((observer) => {
+      this.socket.on('receiveMessage', (data: { message: string }) => {
+        observer.next(data.message);
+      });
+    });
   }
 }
