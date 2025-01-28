@@ -1,0 +1,21 @@
+<nav class="bg-white text-gray-800 p-4 flex justify-between items-center shadow-md">
+  <!-- Logo Section -->
+  <div class="flex items-center">
+    <img src="/logo.png" alt="MyApp Logo" class="h-12 w-50 mr-2" />
+
+  </div>
+
+  <!-- Navigation Links -->
+  <div class="flex items-center">
+    <a href="#features" class="px-4 text-gray-600 hover:text-gray-800 transition">Features</a>
+    <a href="#pricing" class="px-4 text-gray-600 hover:text-gray-800 transition">Pricing</a>
+    <a href="#contact" class="px-4 text-gray-600 hover:text-gray-800 transition">Contact</a>
+
+    <!-- Login Button -->
+    <button
+      (click)="ToAuth()"
+      class="ml-4 px-4 py-2 border-2 rounded-lg text-blue-600 border-blue-600 hover:bg-blue-600 hover:text-white transition">
+      Login
+    </button>
+  </div>
+</nav>
