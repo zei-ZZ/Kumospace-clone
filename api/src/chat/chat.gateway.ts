@@ -1,44 +1,63 @@
-import { WebSocketGateway, SubscribeMessage, MessageBody, ConnectedSocket, WebSocketServer } from '@nestjs/websockets';
+import { WebSocketGateway, SubscribeMessage, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({
-  cors: {
-    origin: "*", // CORS pour permettre les connexions depuis n'importe quelle origine
-  },
-})
-export class ChatGateway {
-  @WebSocketServer() server: Server;
+@WebSocketGateway()
+export class ChatGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer()
+  server: Server;
 
-  private static readonly userIds = [
-    '50fc50f3-43a4-44b6-9b92-20ad6ddb017b',
-    'b3e219f3-47ec-45ba-a697-43b448b4e4a0',
-  ];
+  private users = new Map<string, Socket>();
 
-  private users = new Map(); 
-
-  @SubscribeMessage('sendMessage')
-  handleMessage(@MessageBody() data: { userId: string, message: string }, @ConnectedSocket() socket: Socket): void {
-    const { userId, message } = data;
-    
-    // Vérifie si l'ID utilisateur est valide 
-    if (!ChatGateway.userIds.includes(userId)) {
-      socket.emit('error', 'Utilisateur inconnu');
-      return;
-    }
-
-    // Envoie le message à tous les autres utilisateurs sauf celui qui l'a envoyé
-    socket.broadcast.emit('receiveMessage', { userId, message });
+  // Méthode appelée lors de la connexion
+  handleConnection(client: Socket) {
+    console.log(`User connected: ${client.id}`);
+    this.users.set(client.id, client);
   }
 
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(@MessageBody() userId: string, @ConnectedSocket() socket: Socket): void {
-    // Vérifie si l'ID utilisateur est valide
-    if (!ChatGateway.userIds.includes(userId)) {
-      socket.emit('error', 'Utilisateur inconnu');
-      return;
-    }
+  // Méthode appelée lors de la déconnexion
+  handleDisconnect(client: Socket) {
+    console.log(`User disconnected: ${client.id}`);
+    this.users.delete(client.id);
+  }
 
-    this.users.set(userId, socket);
-    socket.join(userId); // Le client rejoint la "room" correspondant à son ID utilisateur
+  // Méthode pour rejoindre une room
+  @SubscribeMessage('joinRoom')
+  handleJoinRoom(client: Socket, roomId: string): void {
+    console.log(`${client.id} joining room: ${roomId}`);
+    client.join(roomId);
+    this.server.to(roomId).emit('message', `${client.id} a rejoint la room ${roomId}`);
+  }
+
+  // Méthode pour envoyer un message dans une room
+  @SubscribeMessage('sendMessage')
+  handleMessage(client: Socket, payload: { roomId: string, message: string }): void {
+    this.server.to(payload.roomId).emit('message', {
+      userId: client.id,
+      message: payload.message,
+    });
+  }
+
+  // Méthode pour quitter une room
+  @SubscribeMessage('leaveRoom')
+  handleLeaveRoom(client: Socket, roomId: string): void {
+    console.log(`${client.id} leaving room: ${roomId}`);
+    client.leave(roomId);
+    this.server.to(roomId).emit('message', `${client.id} a quitté la room ${roomId}`);
+  }
+
+  // Méthode pour envoyer un message à un utilisateur spécifique
+  @SubscribeMessage('sendToUser')
+  handleSendToUser(client: Socket, payload: { userId: string, message: string }) {
+    const targetClient = this.users.get(payload.userId);
+    if (targetClient) {
+      targetClient.emit('message', {
+        userId: client.id,
+        message: payload.message,
+      });
+    }
+  }
+
+  afterInit(server: Server) {
+    console.log('WebSocket server initialized');
   }
 }
