@@ -1,11 +1,4 @@
-import {
-  Component,
-  OnInit,
-  OnDestroy,
-  ViewChild,
-  ElementRef,
-  inject,
-} from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AsyncPipe, CommonModule } from '@angular/common';
 import { WebrtcService } from '../webrtc/webrtc.service';
@@ -27,8 +20,10 @@ export class VideoboxComponent implements OnInit, OnDestroy {
     this.webrtcService.getLocalStream();
 
   constructor() {
+    this.webrtcService.setSpaceKey('room-default');
+    this.webrtcService.initializeSocketAndPeerConnections();
     this.peerId$ = this.webrtcService.peerId$;
-    this.roomId = this.webrtcService.roomId;
+    this.roomId = this.webrtcService.spaceKey;
     this.remoteStreams$ = this.webrtcService.getRemoteStreams();
   }
 

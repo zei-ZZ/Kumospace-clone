@@ -8,7 +8,7 @@ import { environment } from '../../environment';
   providedIn: 'root',
 })
 export class WebrtcService {
-  private peer: Peer;
+  private peer!: Peer;
   private socket!: Socket;
   private localStreamSubject = new BehaviorSubject<MediaStream | null>(null);
   private remoteStreamsSubject = new BehaviorSubject<{
@@ -17,24 +17,31 @@ export class WebrtcService {
   private peers: { [peerId: string]: MediaConnection } = {};
 
   public peerId$ = new BehaviorSubject<string>('');
-  public roomId = 'default-room';
+  public spaceKey = '';
 
-  constructor() {
-    this.peer = new Peer();
+  setSpaceKey(spaceKey: string) {
+    this.spaceKey = spaceKey;
+  }
+
+  initializeSocketAndPeerConnections() {
+    this.getUserMedia({ video: true, audio: true }).then((stream) => {
+      this.localStreamSubject.next(stream);
+    });
+
+    this.peer! = new Peer();
     this.initializePeer();
     this.connectToSocketServer();
   }
-
   private initializePeer(): void {
-    this.peer.on('open', (id) => {
+    this.peer!.on('open', (id) => {
       this.peerId$.next(id);
-      this.socket.emit('join-room', { spaceKey: this.roomId, peerId: id });
+      this.socket.emit('join-room', { spaceKey: this.spaceKey, peerId: id });
     });
 
-    this.peer.on('call', (call) => {
+    this.peer!.on('call', (call) => {
       //IMPROVEMENT: We can change this to configure permissions
       this.getUserMedia({ video: true, audio: true }).then((stream) => {
-        this.localStreamSubject.next(stream);
+        // this.localStreamSubject.next(stream);
         call.answer(stream);
 
         call.on('stream', (remoteStream) => {
@@ -62,9 +69,9 @@ export class WebrtcService {
 
   public callPeer(remotePeerId: string): void {
     this.getUserMedia({ video: true, audio: true }).then((stream) => {
-      this.localStreamSubject.next(stream);
+      // this.localStreamSubject.next(stream);
 
-      const call = this.peer.call(remotePeerId, stream);
+      const call = this.peer!.call(remotePeerId, stream);
       call.on('stream', (remoteStream) => {
         const remoteStreams = this.remoteStreamsSubject.value;
         remoteStreams[remotePeerId] = remoteStream;
@@ -93,6 +100,6 @@ export class WebrtcService {
     this.localStreamSubject.value?.getTracks().forEach((track) => track.stop());
     Object.values(this.peers).forEach((call) => call.close());
     this.socket.disconnect();
-    this.peer.destroy();
+    this.peer!.destroy();
   }
 }
