@@ -1,4 +1,4 @@
-import { Component, HostListener, signal, OnInit, OnDestroy } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as mapData from '../../assets/kumo.json';
 import { WebSocketService } from './websocket.service';
@@ -11,7 +11,7 @@ import { WebSocketService } from './websocket.service';
   styleUrls: ['./space.component.css'],
 })
 export class SpaceComponent implements OnInit, OnDestroy {
-  private movementInterval: any;
+  private movementInterval!: ReturnType<typeof setInterval>;
 
   mapWidth = 1680;
   mapHeight = 1200;
@@ -21,7 +21,7 @@ export class SpaceComponent implements OnInit, OnDestroy {
   viewportPosition = signal({ x: 0, y: 0 });
   collisionMap = signal<number[][]>([]);
 
-  constructor(private webSocketService: WebSocketService) {}
+  constructor(private readonly webSocketService: WebSocketService) {}
 
   ngOnInit() {
     this.webSocketService.connect();
@@ -30,31 +30,34 @@ export class SpaceComponent implements OnInit, OnDestroy {
   }
 
   private startSendingCoordinates(): void {
+    let lastSentCoordinates = this.char();
     this.movementInterval = setInterval(() => {
       const coordinates = this.char();
-      this.webSocketService.sendCoordinates(coordinates);
-    }, 500); // Update every 500ms
+      if (coordinates.x !== lastSentCoordinates.x || coordinates.y !== lastSentCoordinates.y) {
+        this.webSocketService.sendCoordinates(coordinates);
+        lastSentCoordinates = coordinates;
+      }
+    }, 500); 
   }
 
-  loadCollisionMap() {
-    const collisionLayer = mapData.layers.find((layer: any) => layer.name === 'Collision');
+  private loadCollisionMap() {
+    const collisionLayer = (mapData as any).layers.find((layer: any) => layer.name === 'Collision');
     if (collisionLayer) {
-      const flatData = collisionLayer.data;
-      const binaryData = this.processCollisionLayer(flatData);
-      this.collisionMap.set(this.convertTo2DArray(binaryData, mapData.width, mapData.height));
+      const binaryData = this.processCollisionLayer(collisionLayer.data);
+      this.collisionMap.set(this.convertTo2DArray(binaryData, (mapData as any).width, (mapData as any).height));
+    } else {
+      console.warn('Collision layer not found in map data.');
     }
   }
 
-  processCollisionLayer(rawData: number[]): number[] {
+  private processCollisionLayer(rawData: number[]): number[] {
     return rawData.map((tile) => (tile === 0 ? 0 : 1));
   }
 
-  convertTo2DArray(data: number[], width: number, height: number): number[][] {
+  private convertTo2DArray(data: number[], width: number, height: number): number[][] {
     const result: number[][] = [];
     for (let row = 0; row < height; row++) {
-      const start = row * width;
-      const end = start + width;
-      result.push(data.slice(start, end));
+      result.push(data.slice(row * width, (row + 1) * width));
     }
     return result;
   }
@@ -62,23 +65,15 @@ export class SpaceComponent implements OnInit, OnDestroy {
   @HostListener('window:keydown', ['$event'])
   handleKeydown(event: KeyboardEvent) {
     const { x, y } = this.char();
-
     let newX = x;
     let newY = y;
 
     switch (event.key) {
-      case 'ArrowUp':
-        newY -= this.tileSize;
-        break;
-      case 'ArrowDown':
-        newY += this.tileSize;
-        break;
-      case 'ArrowLeft':
-        newX -= this.tileSize;
-        break;
-      case 'ArrowRight':
-        newX += this.tileSize;
-        break;
+      case 'ArrowUp': newY -= this.tileSize; break;
+      case 'ArrowDown': newY += this.tileSize; break;
+      case 'ArrowLeft': newX -= this.tileSize; break;
+      case 'ArrowRight': newX += this.tileSize; break;
+      default: return; // Ignore other keys
     }
 
     if (this.isWalkable(newX, newY)) {
@@ -87,27 +82,25 @@ export class SpaceComponent implements OnInit, OnDestroy {
     }
   }
 
-  isWalkable(x: number, y: number): boolean {
+  private isWalkable(x: number, y: number): boolean {
     const tileX = Math.floor(x / this.tileSize);
     const tileY = Math.floor(y / this.tileSize);
 
     return (
-      x >= 0 &&
-      y >= 0 &&
-      x < this.mapWidth &&
-      y < this.mapHeight &&
+      x >= 0 && y >= 0 &&
+      x < this.mapWidth && y < this.mapHeight &&
       this.collisionMap()[tileY]?.[tileX] === 0
     );
   }
 
-  updateViewport(x: number, y: number) {
+  private updateViewport(x: number, y: number) {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    const newViewportX = Math.max(0, Math.min(this.mapWidth - viewportWidth, x - viewportWidth / 2));
-    const newViewportY = Math.max(0, Math.min(this.mapHeight - viewportHeight, y - viewportHeight / 2));
-
-    this.viewportPosition.set({ x: newViewportX, y: newViewportY });
+    this.viewportPosition.set({
+      x: Math.max(0, Math.min(this.mapWidth - viewportWidth, x - viewportWidth / 2)),
+      y: Math.max(0, Math.min(this.mapHeight - viewportHeight, y - viewportHeight / 2))
+    });
   }
 
   ngOnDestroy() {
