@@ -3,7 +3,7 @@ import { ChatService } from '../chat.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import  {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-chat',
@@ -12,7 +12,7 @@ import  {jwtDecode} from 'jwt-decode';
   imports: [FormsModule, CommonModule],
 })
 export class ChatComponent implements OnInit {
-  messages: { message: string; sender: string }[] = []; 
+  messages: { message: string; sender: string }[] = [];
   messageText: string = '';
   spaceKey: string = '';
   route: ActivatedRoute = inject(ActivatedRoute);
@@ -26,15 +26,21 @@ export class ChatComponent implements OnInit {
     this.chatService.joinRoom(this.spaceKey);
     this.extractUsernameFromToken();
 
-    this.chatService.onReceiveMessage().subscribe((data: { message: string; sender: string }) => {
-      this.messages.push({ message: data.message, sender: data.sender }); 
-    });
+    this.chatService
+      .onReceiveMessage()
+      .subscribe((data: { message: string; sender: string }) => {
+        this.messages.push({ message: data.message, sender: data.sender });
+      });
   }
 
   sendMessage(): void {
     if (this.messageText.trim()) {
-      this.chatService.sendMessage(this.spaceKey, this.messageText, this.userName); 
-      console.log(this.userName)
+      this.chatService.sendMessage(
+        this.spaceKey,
+        this.messageText,
+        this.userName
+      );
+      console.log(this.userName);
       this.messageText = '';
     }
   }
@@ -49,6 +55,6 @@ export class ChatComponent implements OnInit {
   }
 
   getInitials(sender: string): string {
-    return sender.charAt(0).toUpperCase()
+    return sender.charAt(0).toUpperCase();
   }
 }
