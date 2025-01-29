@@ -1,23 +1,50 @@
 import {
   Component,
   HostListener,
-  inject,
   signal,
+  inject,
+  OnDestroy,
+  OnInit,
   WritableSignal,
 } from '@angular/core';
-import { TileMapService } from '../shared/services/tile-map.service';
 import * as mapData from '../../assets/kumo.json';
+import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { WebrtcService } from '../webrtc/webrtc.service';
+import { ActivatedRoute } from '@angular/router';
+import { TileMapService } from '../shared/services/tile-map.service';
 import * as roomsMap from '../../assets/roomsMatrix.json';
 import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-space',
-  imports: [],
+  imports: [UserAvatarComponent, CommonModule, AsyncPipe],
   templateUrl: './space.component.html',
   styleUrl: './space.component.css',
 })
-export class SpaceComponent {
+export class SpaceComponent implements OnInit, OnDestroy {
   private tileMapService = inject(TileMapService);
+
+  private webrtcService: WebrtcService = inject(WebrtcService);
+  private route = inject(ActivatedRoute);
+  public peerId$: Observable<string> = new Observable<string>();
+  public remoteStreams$: Observable<{ [peerId: string]: MediaStream }> =
+    new Observable<{ [peerId: string]: MediaStream }>();
+  public localStream: Observable<MediaStream | null> =
+    this.webrtcService.getLocalStream();
+  private spaceKey!: string | null;
+
+  ngOnInit(): void {
+    this.loadMaps();
+
+    this.spaceKey = this.route.snapshot.paramMap.get('spaceKey');
+
+    this.webrtcService.setSpaceKey(String(this.spaceKey));
+    this.webrtcService.initializeSocketAndPeerConnections();
+    this.peerId$ = this.webrtcService.peerId$;
+    this.remoteStreams$ = this.webrtcService.getRemoteStreams();
+  }
 
   mapWidth = 1680;
   mapHeight = 1200;
@@ -29,11 +56,6 @@ export class SpaceComponent {
   collisionMap = signal<number[][]>([]);
   doorMap = signal<number[][]>([]);
   private roomsMatrix: string[][] = roomsMap.map;
-
-  ngOnInit() {
-    this.loadMaps();
-    console.log(this.roomsMatrix);
-  }
 
   loadMaps() {
     this.loadLayer('Collision', this.collisionMap);
@@ -152,5 +174,9 @@ export class SpaceComponent {
     );
 
     this.viewportPosition.set({ x: newViewportX, y: newViewportY });
+  }
+
+  ngOnDestroy(): void {
+    this.webrtcService.ngOnDestroy();
   }
 }
