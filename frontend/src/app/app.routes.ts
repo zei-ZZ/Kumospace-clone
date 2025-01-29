@@ -25,5 +25,4 @@ export const routes: Routes = [
     component: LayoutComponent,
     // canActivate: [authGuard]
   },
-
 ];
