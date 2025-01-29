@@ -7,12 +7,12 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ cors: true }) // Activez CORS si nécessaire
+@WebSocketGateway({ cors: true }) 
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
 
-  // Lorsqu'un client se connecte
+  // Lorsqu'un client se connecte 
   handleConnection(@ConnectedSocket() client: Socket) {
     console.log(`Client connected: ${client.id}`);
   }
@@ -28,7 +28,7 @@ export class ChatGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() spaceKey: string,
   ) {
-    // Rejoindre la room correspondant au spaceKey
+    // Rejoindre la room qui corresponde au spacekey(pour chaue space key on 'a un room)
     client.join(spaceKey);
     console.log(`Client ${client.id} joined room ${spaceKey}`);
   }
