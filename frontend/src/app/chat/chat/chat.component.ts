@@ -51,6 +51,6 @@ export class ChatComponent implements OnInit {
   }
 
   getInitials(sender: string): string {
-    return sender
+    return sender.charAt(0).toUpperCase()
   }
 }
