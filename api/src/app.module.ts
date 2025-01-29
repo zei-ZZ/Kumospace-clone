@@ -8,7 +8,7 @@ import { UserModule } from './user/user.module';
 import 'dotenv/config';
 import { User } from './user/user.entity';
 import { Space } from './space/space.entity';
-import { ChatModule } from './chat/chat.module';
+import { ChatGateway } from './chat/chat.gateway';
 
 @Module({
   imports: [
@@ -23,13 +23,12 @@ import { ChatModule } from './chat/chat.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [User, Space],
-      synchronize: true, // Attention : désactive en production !
+      synchronize: true, 
     }),
     SpaceModule,
     UserModule,
-    ChatModule, // Enregistrement du module chat
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,ChatGateway],
 })
 export class AppModule {}

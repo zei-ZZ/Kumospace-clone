@@ -13,25 +13,22 @@ export class ChatService {
     this.socket = io(environment.apiUrl);
   }
 
-  // Rejoindre une room basée sur le spaceKey
   joinRoom(spaceKey: string) {
     this.socket.emit('join-chat', { spaceKey });
   }
 
-  // Envoyer un message à une room spécifique
   sendMessage(spaceKey: string, message: string, sender: string) {
     this.socket.emit('sendMessage', { spaceKey, message, sender });
   }
 
-  // Écouter les messages reçus
   onReceiveMessage(): Observable<{ message: string; sender: string }> {
     return new Observable((observer) => {
       this.socket.on(
         'receiveMessage',
         (data: { message: string; sender: string }) => {
-          console.log('Message received:', data); // Log ici
+          console.log('Message received:', data); 
 
-          observer.next(data); // Retourne le message et le sender
+          observer.next(data); 
         }
       );
     });
