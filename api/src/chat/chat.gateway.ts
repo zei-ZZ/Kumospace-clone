@@ -1,49 +1,76 @@
+import { Logger } from '@nestjs/common';
 import {
+  ConnectedSocket,
+  MessageBody,
+  OnGatewayConnection,
+  OnGatewayDisconnect,
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  SubscribeMessage,
-  MessageBody,
-  ConnectedSocket,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-@WebSocketGateway({ cors: true }) 
-export class ChatGateway {
-  @WebSocketServer()
-  server: Server;
+@WebSocketGateway({ cors: true })
+export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  private readonly logger = new Logger(ChatGateway.name);
+  private spaceKeyPeerIdMap: Map<string, Set<string>> = new Map<
+    string,
+    Set<string>
+  >();
 
-  // Lorsqu'un client se connecte 
-  handleConnection(@ConnectedSocket() client: Socket) {
-    console.log(`Client connected: ${client.id}`);
-  }
+  @WebSocketServer() server: Server;
 
-  // Lorsqu'un client se déconnecte
-  handleDisconnect(@ConnectedSocket() client: Socket) {
-    console.log(`Client disconnected: ${client.id}`);
-  }
-
-  // Rejoindre une room basée sur le spaceKey
-  @SubscribeMessage('joinRoom')
-  handleJoinRoom(
+  @SubscribeMessage('join-room')
+  async handleSpaceJoin(
     @ConnectedSocket() client: Socket,
-    @MessageBody() spaceKey: string,
+    @MessageBody() data: { spaceKey: string; peerId: string },
   ) {
-    // Rejoindre la room qui corresponde au spacekey(pour chaue space key on 'a un room)
-    client.join(spaceKey);
-    console.log(`Client ${client.id} joined room ${spaceKey}`);
+    const { spaceKey, peerId } = data;
+    if (!this.spaceKeyPeerIdMap.has(spaceKey)) {
+      this.spaceKeyPeerIdMap.set(spaceKey, new Set<string>());
+    }
+
+    this.server.to(spaceKey).emit('user-connected', peerId);
+
+    await client.join(spaceKey);
+    this.spaceKeyPeerIdMap.get(spaceKey)?.add(peerId);
   }
 
-  // Envoyer un message à une room spécifique
+  @SubscribeMessage('disconnect')
+  async handleSpaceLeave(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { spaceKey: string; peerId: string },
+  ) {
+    const { spaceKey, peerId } = data;
+    if (!this.spaceKeyPeerIdMap.get(spaceKey)) return 'Space does not exist';
+    if (!this.spaceKeyPeerIdMap.get(spaceKey)?.has(peerId))
+      return 'user not in space';
+    await client.leave(spaceKey);
+    this.spaceKeyPeerIdMap.get(spaceKey)?.delete(peerId);
+    this.server.to(spaceKey).emit('user-disconnected', peerId);
+  }
+
   @SubscribeMessage('sendMessage')
   handleSendMessage(
     @ConnectedSocket() client: Socket,
-    @MessageBody() payload: { spaceKey: string; message: string; sender: string }, 
+    @MessageBody()
+    payload: { spaceKey: string; message: string; sender: string },
   ) {
     console.log('Payload received:', payload);
 
     const { spaceKey, message, sender } = payload;
-    console.log("i m the sencer",sender)
-    this.server.to(spaceKey).emit('receiveMessage', { message, sender }); 
+    console.log('i m the spender', sender);
+    this.server.to(spaceKey).emit('receiveMessage', { message, sender });
     console.log(`Message sent to room ${spaceKey} by ${sender}: ${message}`);
+  }
+
+  handleConnection(client: Socket, ...args: any[]) {
+    this.logger.debug(
+      `Number of connected clients: ${this.server.sockets.sockets.size}`,
+    );
+  }
+
+  handleDisconnect(@ConnectedSocket() client: Socket) {
+    this.logger.log(`Cliend id:${client.id} disconnected`);
   }
 }

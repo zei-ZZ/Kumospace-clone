@@ -24,10 +24,12 @@
     "bootstrap": "^5.3.3",
     "jwt-decode": "^4.0.0",
     "primeng": "^19.0.5",
+    "peerjs": "^1.5.4",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.8.1",
     "sweetalert2": "^11.15.10",
     "tslib": "^2.3.0",
+    "ws": "^8.18.0",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

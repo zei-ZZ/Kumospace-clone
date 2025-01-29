@@ -1,0 +1,7 @@
+.video-element {
+  width: 70px;
+  height: 70px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  object-fit: cover;
+}
