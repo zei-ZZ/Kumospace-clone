@@ -22,7 +22,6 @@ export class ChatService {
     this.socket.emit('sendMessage', { spaceKey, message, sender });
   }
 
-  // Écouter les messages reçus
  // Écouter les messages reçus
  onReceiveMessage(): Observable<{ message: string; sender: string }> {
   return new Observable((observer) => {

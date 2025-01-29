@@ -5,8 +5,6 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import  {jwtDecode} from 'jwt-decode';
 
-
-
 @Component({
   selector: 'app-chat',
   templateUrl: './chat.component.html',
@@ -14,7 +12,7 @@ import  {jwtDecode} from 'jwt-decode';
   imports: [FormsModule, CommonModule],
 })
 export class ChatComponent implements OnInit {
-  messages: { message: string; sender: string }[] = []; // Modifiez la structure des messages
+  messages: { message: string; sender: string }[] = []; 
   messageText: string = '';
   spaceKey: string = '';
   route: ActivatedRoute = inject(ActivatedRoute);
