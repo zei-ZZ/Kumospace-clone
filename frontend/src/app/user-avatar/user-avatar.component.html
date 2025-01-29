@@ -1,8 +1,12 @@
 <div class="z-40">
+  @if (!showProfilePicture) {
   <video
     [srcObject]="stream()"
     autoplay
     [muted]="muted()"
     class="video-element"
   ></video>
+  } @else {
+  <img [src]="profilePicture" alt="Profile" class="profile-pic video-element" />
+  }
 </div>

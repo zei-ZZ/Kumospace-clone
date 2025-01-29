@@ -8,6 +8,7 @@
     <app-user-avatar
       [stream]="localStream | async"
       [muted]="true"
+      [showProfilePicture]="!videoEnabled()"
     ></app-user-avatar>
   </div>
   <div>
@@ -17,10 +18,4 @@
     </div>
     }
   </div>
-  <!--
-  <div
-    class="character"
-    [style.left.px]="char().x"
-    [style.top.px]="char().y"
-  ></div>-->
 </div>

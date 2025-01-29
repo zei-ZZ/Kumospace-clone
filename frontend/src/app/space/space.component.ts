@@ -17,6 +17,7 @@ import { WebSocketService } from '../shared/services/websocket.service';
 import { TileMapService } from '../shared/services/tile-map.service';
 import * as roomsMap from '../../assets/roomsMatrix.json';
 import Swal from 'sweetalert2';
+import { VideoAudioStateService } from '../shared/services/video-audio-state.service';
 
 @Component({
   selector: 'app-space',
@@ -25,7 +26,10 @@ import Swal from 'sweetalert2';
   styleUrls: ['./space.component.css'],
 })
 export class SpaceComponent implements OnInit, OnDestroy {
+
   private movementInterval!: ReturnType<typeof setInterval>;
+
+  private videoAudioStateService = inject(VideoAudioStateService);
 
   private webSocketService = inject(WebSocketService);
   private tileMapService = inject(TileMapService);
@@ -36,6 +40,9 @@ export class SpaceComponent implements OnInit, OnDestroy {
   public peerId$: Observable<string> = new Observable<string>();
   public remoteStreams$: Observable<{ [peerId: string]: MediaStream }> =
     new Observable<{ [peerId: string]: MediaStream }>();
+
+  videoEnabled = this.videoAudioStateService.videoEnabled;
+
   public localStream: Observable<MediaStream | null> =
     this.webrtcService.getLocalStream();
   private spaceKey!: string | null;

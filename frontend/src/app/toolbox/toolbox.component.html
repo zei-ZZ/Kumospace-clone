@@ -8,18 +8,22 @@
     >
       <ng-icon class="icon" name="heroMicrophone" />
     </button>
+
     <button
       class="w-12 h-12 rounded-full bg-gray-500 bg-opacity-90 flex items-center justify-center text-white hover:bg-gray-400"
       aria-label="Video"
+      (click)="toggleVideo()"
     >
-      <ng-icon class="icon" name="heroVideoCamera" />
+      <ng-icon
+        class="icon"
+        [name]="videoEnabled() ? 'heroVideoCamera' : 'heroVideoCameraSlash'"
+      />
     </button>
 
     <button
       class="w-12 h-12 rounded-full bg-gray-500 bg-opacity-90 flex items-center justify-center text-white hover:bg-gray-400"
       aria-label="Chat"
       (click)="toggleChat()"
-
     >
       <ng-icon class="icon" name="heroChatBubbleLeftRight" />
     </button>
@@ -30,8 +34,5 @@
       <ng-icon class="icon" name="heroArrowRightStartOnRectangle" />
     </button>
   </div>
-
-
 </div>
-  <app-chat *ngIf="isChatOpen"></app-chat>
-
+<app-chat *ngIf="isChatOpen"></app-chat>
