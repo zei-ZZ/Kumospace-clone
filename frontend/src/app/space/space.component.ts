@@ -1,13 +1,44 @@
-import { Component, HostListener, signal } from '@angular/core';
+import {
+  Component,
+  HostListener,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+} from '@angular/core';
 import * as mapData from '../../assets/kumo.json';
+import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
+import { WebrtcService } from '../webrtc/webrtc.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-space',
-  imports: [],
+  imports: [UserAvatarComponent, CommonModule, AsyncPipe],
   templateUrl: './space.component.html',
   styleUrl: './space.component.css',
 })
-export class SpaceComponent {
+export class SpaceComponent implements OnInit, OnDestroy {
+  private webrtcService: WebrtcService = inject(WebrtcService);
+  private route = inject(ActivatedRoute);
+  public peerId$: Observable<string> = new Observable<string>();
+  public remoteStreams$: Observable<{ [peerId: string]: MediaStream }> =
+    new Observable<{ [peerId: string]: MediaStream }>();
+  public localStream: Observable<MediaStream | null> =
+    this.webrtcService.getLocalStream();
+  private spaceKey!: string | null;
+
+  ngOnInit(): void {
+    this.loadCollisionMap();
+
+    this.spaceKey = this.route.snapshot.paramMap.get('spaceKey');
+
+    this.webrtcService.setSpaceKey(String(this.spaceKey));
+    this.webrtcService.initializeSocketAndPeerConnections();
+    this.peerId$ = this.webrtcService.peerId$;
+    this.remoteStreams$ = this.webrtcService.getRemoteStreams();
+  }
 
   mapWidth = 1680;
   mapHeight = 1200;
@@ -18,16 +49,16 @@ export class SpaceComponent {
 
   collisionMap = signal<number[][]>([]);
 
-  ngOnInit() {
-    this.loadCollisionMap();
-  }
-
   loadCollisionMap() {
-    const collisionLayer = mapData.layers.find((layer: any) => layer.name === 'Collision');
+    const collisionLayer = mapData.layers.find(
+      (layer: any) => layer.name === 'Collision'
+    );
     if (collisionLayer) {
       const flatData = collisionLayer.data;
       const binaryData = this.processCollisionLayer(flatData);
-      this.collisionMap.set(this.convertTo2DArray(binaryData, mapData.width, mapData.height));
+      this.collisionMap.set(
+        this.convertTo2DArray(binaryData, mapData.width, mapData.height)
+      );
     }
   }
 
@@ -38,7 +69,7 @@ export class SpaceComponent {
    * Convert non-zero to 1
    */
   processCollisionLayer(rawData: number[]): number[] {
-    return rawData.map((tile) => (tile === 0 ? 0 : 1)); 
+    return rawData.map((tile) => (tile === 0 ? 0 : 1));
   }
 
   /**
@@ -96,7 +127,7 @@ export class SpaceComponent {
       y >= 0 &&
       x < this.mapWidth &&
       y < this.mapHeight &&
-      this.collisionMap()[tileY]?.[tileX] === 0 
+      this.collisionMap()[tileY]?.[tileX] === 0
     );
   }
 
@@ -105,9 +136,19 @@ export class SpaceComponent {
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    const newViewportX = Math.max(0, Math.min(this.mapWidth - viewportWidth, x - viewportWidth / 2));
-    const newViewportY = Math.max(0, Math.min(this.mapHeight - viewportHeight, y - viewportHeight / 2));
+    const newViewportX = Math.max(
+      0,
+      Math.min(this.mapWidth - viewportWidth, x - viewportWidth / 2)
+    );
+    const newViewportY = Math.max(
+      0,
+      Math.min(this.mapHeight - viewportHeight, y - viewportHeight / 2)
+    );
 
     this.viewportPosition.set({ x: newViewportX, y: newViewportY });
+  }
+
+  ngOnDestroy(): void {
+    this.webrtcService.ngOnDestroy();
   }
 }
