@@ -11,18 +11,16 @@
     ></app-user-avatar>
   </div>
   <div>
-    @for (remoteStream of remoteStreams$ | async | keyvalue; track
-    remoteStream.key) {
-    <app-user-avatar
-      [stream]="remoteStream.value"
-      [muted]="true"
-    ></app-user-avatar>
+    @for (player of remotePlayers(); track player.id) {
+    <div class="character" [style.left.px]="player.x" [style.top.px]="player.y">
+      <app-user-avatar [stream]="null" [muted]="true"></app-user-avatar>
+    </div>
     }
   </div>
-
+  <!--
   <div
     class="character"
     [style.left.px]="char().x"
     [style.top.px]="char().y"
-  ></div>
+  ></div>-->
 </div>

@@ -40,12 +40,18 @@ export class SpaceComponent implements OnInit, OnDestroy {
     this.webrtcService.getLocalStream();
   private spaceKey!: string | null;
 
+  public remotePlayers = signal<{ id: string; x: number; y: number }[]>([]);
+
   ngOnInit(): void {
-this.webSocketService.connect();
-    this.startSendingCoordinates();    
-this.loadMaps();
+    this.webSocketService.connect();
+    this.startSendingCoordinates();
+    this.loadMaps();
 
     this.spaceKey = this.route.snapshot.paramMap.get('spaceKey');
+
+    this.webSocketService.onNearbyAvatars((players) => {
+      this.remotePlayers.set(players);
+    });
 
     this.webrtcService.setSpaceKey(String(this.spaceKey));
     this.webrtcService.initializeSocketAndPeerConnections();
@@ -63,21 +69,21 @@ this.loadMaps();
   doorMap = signal<number[][]>([]);
   private roomsMatrix: string[][] = roomsMap.map;
 
-private startSendingCoordinates(): void {
-  let lastSentCoordinates = this.char();
-  this.movementInterval = setInterval(() => {
-    const coordinates = this.char();
-    if (
-      coordinates.x !== lastSentCoordinates.x ||
-      coordinates.y !== lastSentCoordinates.y
-    ) {
-      this.webSocketService.sendCoordinates(coordinates);
-      lastSentCoordinates = coordinates;
-    }
-  }, 500);
-}  
+  private startSendingCoordinates(): void {
+    let lastSentCoordinates = this.char();
+    this.movementInterval = setInterval(() => {
+      const coordinates = this.char();
+      if (
+        coordinates.x !== lastSentCoordinates.x ||
+        coordinates.y !== lastSentCoordinates.y
+      ) {
+        this.webSocketService.sendCoordinates(coordinates);
+        lastSentCoordinates = coordinates;
+      }
+    }, 500);
+  }
 
-loadMaps() {
+  loadMaps() {
     this.loadLayer('Collision', this.collisionMap);
     this.loadLayer('Doors', this.doorMap);
   }
