@@ -26,21 +26,24 @@ export class LayoutComponent implements OnInit {
 
   getSpaceByKey(): void {
     if (this.spaceKey) {
-      this.spaceService.getSpaceByKey(this.spaceKey).pipe(
-        tap(response => {
-          this.space = {
-            id: response.id,
-            name: response.name,
-            key: response.key,
-            capacity: response.capacity,
-            userId: response.user.id
-          };
-        }),
-        catchError(error => {
-          console.error('Error fetching space by key:', error);
-          return of(null);
-        })
-      ).subscribe();
+      this.spaceService
+        .getSpaceByKey(this.spaceKey)
+        .pipe(
+          tap((response) => {
+            this.space = {
+              id: response.id,
+              name: response.name,
+              key: response.key,
+              capacity: response.capacity,
+              userId: response.user.id,
+            };
+          }),
+          catchError((error) => {
+            console.error('Error fetching space by key:', error);
+            return of(null);
+          })
+        )
+        .subscribe();
     }
   }
 }

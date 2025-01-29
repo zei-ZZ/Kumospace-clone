@@ -23,12 +23,12 @@ import { ChatGateway } from './chat/chat.gateway';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [User, Space],
-      synchronize: true,
+      synchronize: true, 
     }),
     SpaceModule,
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ChatGateway],
+  providers: [AppService,ChatGateway],
 })
 export class AppModule {}

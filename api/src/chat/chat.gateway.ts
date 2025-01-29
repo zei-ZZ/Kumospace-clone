@@ -20,6 +20,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   @WebSocketServer() server: Server;
 
+  @SubscribeMessage('join-chat')
+  async handleSpaceJoinChat(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { spaceKey: string },
+  ) {
+    await client.join(data.spaceKey + 'room');
+  }
+
   @SubscribeMessage('join-room')
   async handleSpaceJoin(
     @ConnectedSocket() client: Socket,
@@ -48,6 +56,21 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     await client.leave(spaceKey);
     this.spaceKeyPeerIdMap.get(spaceKey)?.delete(peerId);
     this.server.to(spaceKey).emit('user-disconnected', peerId);
+  }
+
+  @SubscribeMessage('sendMessage')
+  handleSendMessage(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    payload: { spaceKey: string; message: string; sender: string },
+  ) {
+    console.log('Payload received:', payload);
+
+    const { spaceKey, message, sender } = payload;
+    this.server
+      .to(spaceKey + 'room')
+      .emit('receiveMessage', { message, sender });
+    console.log(`Message sent to room ${spaceKey} by ${sender}: ${message}`);
   }
 
   handleConnection(client: Socket, ...args: any[]) {

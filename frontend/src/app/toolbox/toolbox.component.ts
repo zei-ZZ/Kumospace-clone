@@ -7,12 +7,14 @@ import {
   heroVideoCamera,
   heroVideoCameraSlash,
 } from '@ng-icons/heroicons/outline';
+import { ChatComponent } from"../chat/chat/chat.component";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-toolbox',
   templateUrl: './toolbox.component.html',
   styleUrl: './toolbox.component.css',
-  imports: [NgIcon],
+  imports: [NgIcon, ChatComponent,CommonModule],
   standalone: true,
   viewProviders: [
     provideIcons({
@@ -24,4 +26,11 @@ import {
     }),
   ],
 })
-export class ToolboxComponent {}
+export class ToolboxComponent {
+  isChatOpen: boolean = false;
+
+  toggleChat() {
+    this.isChatOpen = !this.isChatOpen;
+  }
+
+}
