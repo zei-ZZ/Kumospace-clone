@@ -36,7 +36,7 @@ export class WebSocketService {
   
   sendCoordinates(coordinates: { x: number; y: number }) {
     if (this.isConnected && this.socket) {
-      this.socket.emit('playerMove', coordinates); // Ensure this event name matches the backend
+      this.socket.emit('playerMove', coordinates); 
       console.log(coordinates);
     } else {
       console.warn('Socket is not connected. Cannot send coordinates.');

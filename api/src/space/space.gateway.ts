@@ -10,7 +10,7 @@ import {
   
   @WebSocketGateway({
     cors: {
-      origin: 'http://localhost:4200', // Frontend URL
+      origin: 'http://localhost:4200', 
       methods: ['GET', 'POST'],
       credentials: true,
     },
@@ -20,9 +20,11 @@ import {
     server: Server;
   
     private players = new Map<string, { x: number; y: number }>();
+    private clientId =  "";
   
     handleConnection(client: Socket) {
       console.log(`Client connected: ${client.id}`);
+      this.clientId = client.id;
     }
   
     handleDisconnect(client: Socket) {
@@ -31,43 +33,38 @@ import {
       this.broadcastNearbyAvatars();
     }
   
-    // Listen for 'playerMove' event
+    
     @SubscribeMessage('playerMove')
     handlePlayerMovement(
       client: Socket,
-      @MessageBody() movement: { x: number; y: number }
+      movement: { x: number; y: number }
     ): void {
-      console.log('Client:', client);  // Logs client object to check if it's defined
+
+      console.log('Arguments received:', arguments);
+      console.log('Client:', client);  
   
       if (!client) {
-        console.error('❗ Client is undefined in handlePlayerMovement');
+        console.error('Client is undefined in handlePlayerMovement');
         return;
       }
   
       if (!movement) {
-        console.error('❗ Movement data is missing');
+        console.error('Movement data is missing');
         return;
       }
   
       console.log(`Player ${client.id} moved to:`, movement);
-  
-      // Update player position in the map
       this.players.set(client.id, movement);
-  
-      // Broadcast the updated player positions to all clients
       this.broadcastNearbyAvatars();
     }
   
-    // Broadcast the positions of all players to every connected client
+
     private broadcastNearbyAvatars() {
-      // Create a list of all player positions
       const allPlayers = Array.from(this.players.entries()).map(
         ([id, coordinates]) => ({ id, ...coordinates })
       );
   
       console.log('Broadcasting all player positions:', allPlayers);
-  
-      // Emit the list of all players and their positions to all connected clients
       this.server.emit('nearbyAvatars', allPlayers);
     }
   }
