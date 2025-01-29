@@ -1,4 +1,4 @@
-.toolbox {
+/* .toolbox {
     position: fixed;
     bottom: 0;
     width: 100%;
@@ -27,4 +27,7 @@
 
 .tool-button:focus {
     outline: 2px solid #333;
+} */
+.icon {
+  font-size: x-large;
 }

@@ -20,6 +20,9 @@
   display: flex;
   flex-direction: column;
   position: relative;
+  width: 1400px;
+  max-height: 900px;
+  min-height: 500px;
 }
 
 .profile-bg {
@@ -34,25 +37,24 @@
   z-index: -1;
 }
 
-.container {
+.user-container {
   display: flex;
   flex-direction: row;
   align-items: stretch;
   width: 100%;
-} 
+}
 
 .profile-image {
   animation: loadProfileImage 1s ease-in-out 0.5s;
   animation-fill-mode: both;
   position: relative;
   border-radius: 10px;
-  box-shadow: 0 25px 45px -20px #2634DF,
-    inset 0 0px 120px #2634DF;
+  box-shadow: 0 25px 45px -20px #2634df, inset 0 0px 120px #2634df;
   width: 25%;
   flex: none;
-  background-image: url("https://zephyo.github.io/22Days/code/3/graphics/profile.png");
   background-size: cover;
   background-position: center;
+  height: 500px;
 }
 
 .profile-image::before {
@@ -61,7 +63,7 @@
   width: 100%;
   height: 100%;
   border-radius: 10px;
-  background-color:#2634DF;
+  background-color: #2634df;
   opacity: 0.8;
   mix-blend-mode: screen;
 }
@@ -82,23 +84,22 @@
 }
 
 h1.first-name {
-  animation: titleEffect 1s cubic-bezier(0,0.2,0.4,1);
+  animation: titleEffect 1s cubic-bezier(0, 0.2, 0.4, 1);
   top: -115px;
   left: -85px;
-} 
+}
 
 h1.second-name {
-  animation: titleEffect 1s cubic-bezier(0,0,0.3,1);
+  animation: titleEffect 1s cubic-bezier(0, 0, 0.3, 1);
   top: -50px;
   left: -45px;
 }
 
-h1.first-name, h1.second-name {
-  text-shadow: 
-    0 0 5px rgb(147, 147, 209),
-    0 0 10px rgb(147, 147, 209),
+h1.first-name,
+h1.second-name {
+  text-shadow: 0 0 5px rgb(147, 147, 209), 0 0 10px rgb(147, 147, 209),
     0 0 15px rgb(147, 147, 209);
-  color:rgb(33, 34, 34); 
+  color: rgb(33, 34, 34);
 }
 
 .profile-info h2 {
@@ -110,7 +111,7 @@ h1.first-name, h1.second-name {
 }
 
 .profile-info h2 {
-  color: #2634DF;
+  color: #2634df;
 }
 
 .profile-info p {
@@ -218,12 +219,12 @@ h1.first-name, h1.second-name {
 }
 
 @keyframes loadProfile {
- from{
+  from {
     transform: translateY(100px);
     opacity: 0;
   }
- to {
-     transform: translateY(0px);
+  to {
+    transform: translateY(0px);
     opacity: 1;
   }
 }
@@ -233,19 +234,19 @@ h1.first-name, h1.second-name {
     transform: translateY(50px);
     opacity: 0;
   }
- to {
-     transform: translateY(0px);
+  to {
+    transform: translateY(0px);
     opacity: 1;
   }
 }
 
 @keyframes titleEffect {
- from {
-   opacity:0;
-     transform: translateX(-75px);
+  from {
+    opacity: 0;
+    transform: translateX(-75px);
   }
   to {
-     transform: translateX(0px);
+    transform: translateX(0px);
     opacity: 1;
   }
 }

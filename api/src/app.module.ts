@@ -23,7 +23,7 @@ import { SpaceGateway } from './space/space.gateway';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
       entities: [User, Space],
-      synchronize: true,
+      synchronize: true, 
     }),
     SpaceModule,
     UserModule,

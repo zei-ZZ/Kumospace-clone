@@ -5,7 +5,7 @@
   font-family: 'Nunito', sans-serif;
 }
 
-.container{
+.auth-container{
   width: 100%;
   height: 100vh;
   display: flex;

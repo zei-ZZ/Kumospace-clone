@@ -1,0 +1,26 @@
+<!-- this component needs to be changed where every app-video-player needs to be accompanied by avatar  -->
+<div>
+  <h2>My Peer ID: {{ peerId$ | async }}</h2>
+  <h3>Room ID: {{ roomId }}</h3>
+</div>
+
+<div>
+  <h3>Local Video</h3>
+  <app-user-avatar
+    [stream]="localStream | async"
+    [muted]="true"
+  ></app-user-avatar>
+</div>
+
+<div>
+  <h3>Remote Videos</h3>
+  <div class="video-container">
+    @for (remoteStream of remoteStreams$ | async | keyvalue; track
+    remoteStream.key) {
+    <app-user-avatar
+      [stream]="remoteStream.value"
+      [muted]="true"
+    ></app-user-avatar>
+    }
+  </div>
+</div>

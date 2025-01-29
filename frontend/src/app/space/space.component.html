@@ -4,6 +4,22 @@
     '-' + viewportPosition().x + 'px -' + viewportPosition().y + 'px'
   "
 >
+  <div class="character" [style.left.px]="char().x" [style.top.px]="char().y">
+    <app-user-avatar
+      [stream]="localStream | async"
+      [muted]="true"
+    ></app-user-avatar>
+  </div>
+  <div>
+    @for (remoteStream of remoteStreams$ | async | keyvalue; track
+    remoteStream.key) {
+    <app-user-avatar
+      [stream]="remoteStream.value"
+      [muted]="true"
+    ></app-user-avatar>
+    }
+  </div>
+
   <div
     class="character"
     [style.left.px]="char().x"
