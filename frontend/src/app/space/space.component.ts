@@ -7,6 +7,7 @@ import {
 } from '@angular/core';
 import { TileMapService } from '../shared/services/tile-map.service';
 import * as mapData from '../../assets/kumo.json';
+import * as roomsMap from '../../assets/roomsMatrix.json';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -27,9 +28,11 @@ export class SpaceComponent {
 
   collisionMap = signal<number[][]>([]);
   doorMap = signal<number[][]>([]);
+  private roomsMatrix: string[][] = roomsMap.map;
 
   ngOnInit() {
     this.loadMaps();
+    console.log(this.roomsMatrix);
   }
 
   loadMaps() {
@@ -90,11 +93,24 @@ export class SpaceComponent {
           reverseButtons: true,
         }).then((result) => {
           if (result.isConfirmed) {
-            // User confirmed: implement room entering logic here
-            console.log('Entering the room...');
+            console.log(previousPosition);
+            console.log(newX, newY);
+
+            console.log(
+              `Moving from room ${
+                this.roomsMatrix[
+                  Math.floor(previousPosition.y / this.tileSize)
+                ][Math.floor(previousPosition.x / this.tileSize)]
+              } to room ${
+                this.roomsMatrix[Math.floor(newY / this.tileSize) + 1][
+                  Math.floor(newX / this.tileSize) + 1
+                ]
+              }`
+            );
+            // make websoccket call here
           } else {
             // User canceled: revert to previous position
-            this.char.set(previousPosition); 
+            this.char.set(previousPosition);
             this.updateViewport(previousPosition.x, previousPosition.y);
           }
         });
