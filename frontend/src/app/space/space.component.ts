@@ -1,7 +1,7 @@
 import { Component, HostListener, OnInit, OnDestroy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import * as mapData from '../../assets/kumo.json';
-import { WebSocketService } from './websocket.service';
+import { WebSocketService } from '../shared/services/websocket.service';
 
 @Component({
   selector: 'app-space',
@@ -11,6 +11,7 @@ import { WebSocketService } from './websocket.service';
   styleUrls: ['./space.component.css'],
 })
 export class SpaceComponent implements OnInit, OnDestroy {
+  
   private movementInterval!: ReturnType<typeof setInterval>;
 
   mapWidth = 1680;
@@ -73,7 +74,7 @@ export class SpaceComponent implements OnInit, OnDestroy {
       case 'ArrowDown': newY += this.tileSize; break;
       case 'ArrowLeft': newX -= this.tileSize; break;
       case 'ArrowRight': newX += this.tileSize; break;
-      default: return; // Ignore other keys
+      default: return;
     }
 
     if (this.isWalkable(newX, newY)) {

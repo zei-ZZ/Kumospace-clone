@@ -43,7 +43,6 @@ export class WebSocketService {
     }
   }
   
-
   onNearbyAvatars(callback: (data: any) => void) {
     this.socket.on('nearbyAvatars', callback);
   }

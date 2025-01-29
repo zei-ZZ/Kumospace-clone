@@ -2,7 +2,6 @@ import {
     WebSocketGateway,
     WebSocketServer,
     SubscribeMessage,
-    MessageBody,
     OnGatewayConnection,
     OnGatewayDisconnect,
   } from '@nestjs/websockets';
@@ -39,9 +38,6 @@ import {
       client: Socket,
       movement: { x: number; y: number }
     ): void {
-
-      console.log('Arguments received:', arguments);
-      console.log('Client:', client);  
   
       if (!client) {
         console.error('Client is undefined in handlePlayerMovement');
