@@ -105,6 +105,22 @@ export class SpaceComponent implements OnInit, OnDestroy {
       this.updateViewport(newX, newY);
 
       if (this.isAtDoor(newX, newY)) {
+        // hack :P
+        switch (event.key) {
+          case 'ArrowUp':
+            newY -= this.tileSize;
+            break;
+          case 'ArrowDown':
+            newY += this.tileSize;
+            break;
+          case 'ArrowLeft':
+            newX -= this.tileSize;
+            break;
+          case 'ArrowRight':
+            newX += this.tileSize;
+            break;
+        }
+
         Swal.fire({
           title: 'Do you want to enter this room?',
           text: "You'll get out of your current room!",
@@ -124,8 +140,8 @@ export class SpaceComponent implements OnInit, OnDestroy {
                   Math.floor(previousPosition.y / this.tileSize)
                 ][Math.floor(previousPosition.x / this.tileSize)]
               } to room ${
-                this.roomsMatrix[Math.floor(newY / this.tileSize) + 1][
-                  Math.floor(newX / this.tileSize) + 1
+                this.roomsMatrix[Math.floor(newY / this.tileSize)][
+                  Math.floor(newX / this.tileSize)
                 ]
               }`
             );
