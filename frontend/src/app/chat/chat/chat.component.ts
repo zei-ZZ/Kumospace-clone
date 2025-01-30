@@ -15,11 +15,12 @@ export class ChatComponent implements OnInit {
   messages: { message: string; sender: string }[] = [];
   messageText: string = '';
   spaceKey: string = '';
-  route: ActivatedRoute = inject(ActivatedRoute);
   initials: string = '';
   userName: string = '';
 
-  constructor(private chatService: ChatService) {}
+  route: ActivatedRoute = inject(ActivatedRoute);
+  
+  private chatService = inject(ChatService);
 
   ngOnInit(): void {
     this.spaceKey = this.route.snapshot.paramMap.get('spaceKey')!;
