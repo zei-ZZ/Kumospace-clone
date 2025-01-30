@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
+import { environment } from '../../../environment';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ export class WebSocketService {
 
   connect() {
     if (!this.socket || !this.isConnected) {
-      this.socket = io('http://localhost:3000', {
+      this.socket = io(environment.apiUrl, {
         transports: ['websocket', 'polling'],
         withCredentials: true,
         reconnection: true,

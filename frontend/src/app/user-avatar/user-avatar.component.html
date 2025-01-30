@@ -1,5 +1,5 @@
 <div class="z-40">
-  @if (!showProfilePicture) {
+  @if (!showProfilePicture()) {
   <video
     [srcObject]="stream()"
     autoplay

@@ -19,11 +19,9 @@ import {
     server: Server;
   
     private players = new Map<string, { x: number; y: number }>();
-    private clientId =  "";
   
     handleConnection(client: Socket) {
       console.log(`Client connected: ${client.id}`);
-      this.clientId = client.id;
     }
   
     handleDisconnect(client: Socket) {

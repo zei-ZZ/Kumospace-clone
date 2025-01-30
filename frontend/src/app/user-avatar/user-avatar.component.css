@@ -2,6 +2,6 @@
   width: 70px;
   height: 70px;
   border-radius: 12px;
-  border: 1px solid #ccc;
+  border: 3px solid black;
   object-fit: cover;
 }
