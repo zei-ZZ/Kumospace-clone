@@ -180,7 +180,7 @@ export class SpaceComponent implements OnInit, OnDestroy {
                 ]
               }`
             );
-            // make websoccket call here
+            // make websocket call here
           } else {
             // User canceled: revert to previous position
             this.char.set(previousPosition);
