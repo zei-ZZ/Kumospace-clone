@@ -7,12 +7,19 @@ import { SpaceService } from '../shared/services/space.service';
 import { SpaceDto } from '../shared/models/space';
 import { showCreateSpacePopup, showJoinSpacePopup } from '../shared/utils';
 import { Router } from '@angular/router';
+import { heroArrowRightStartOnRectangle } from '@ng-icons/heroicons/outline';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [],
+  imports: [NgIcon,CommonModule],
   templateUrl: './user-profile.component.html',
-  styleUrl: './user-profile.component.css'
+  styleUrl: './user-profile.component.css', viewProviders: [
+      provideIcons({
+        heroArrowRightStartOnRectangle,
+      }),
+    ],
 })
 export class UserProfileComponent {
   userService = inject(UserService);
@@ -113,4 +120,8 @@ export class UserProfileComponent {
       }
     });
   }
+  signout():void{
+   localStorage.clear();
+   this.router.navigate(['auth'])
+}
 }
