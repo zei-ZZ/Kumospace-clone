@@ -10,6 +10,8 @@ import {
 import { ChatComponent } from"../chat/chat/chat.component";
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { STORAGE_KEYS } from '../shared/constants/storage-keys';
+import { StorageService } from '../shared/services/storage.service';
 
 @Component({
   selector: 'app-toolbox',
@@ -31,13 +33,14 @@ export class ToolboxComponent {
   isChatOpen: boolean = false;
 
    router = inject(Router);
+   storageservice=inject(StorageService)
  
   toggleChat() {
     this.isChatOpen = !this.isChatOpen;
   }
   LeaveMeeting(){
 
-    const userId = localStorage.getItem('user_id');
+    const userId = this.storageservice.getItem(STORAGE_KEYS.USER_ID);
     if(userId){
       this.router.navigate([`userpage/${userId}`])
      }

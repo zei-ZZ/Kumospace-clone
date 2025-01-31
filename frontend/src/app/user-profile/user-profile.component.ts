@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { heroArrowRightStartOnRectangle } from '@ng-icons/heroicons/outline';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../shared/services/auth.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -24,6 +25,7 @@ import { CommonModule } from '@angular/common';
 export class UserProfileComponent {
   userService = inject(UserService);
   spaceService = inject(SpaceService);
+  authservice=inject(AuthService)
   router = inject(Router);
 
   @Input() user!: UserDto;
@@ -120,8 +122,8 @@ export class UserProfileComponent {
       }
     });
   }
-  signout():void{
-   localStorage.clear();
-   this.router.navigate(['auth'])
+  logout():void{
+   this.authservice.logout();
+   this.router.navigate(['auth']);
 }
 }

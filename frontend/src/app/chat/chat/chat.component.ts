@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { STORAGE_KEYS } from '../../shared/constants/storage-keys';
+import { StorageService } from '../../shared/services/storage.service';
 
 @Component({
   selector: 'app-chat',
@@ -18,6 +20,7 @@ export class ChatComponent implements OnInit {
   route: ActivatedRoute = inject(ActivatedRoute);
   initials: string = '';
   userName: string = '';
+  storageservice=inject(StorageService)
 
   constructor(private chatService: ChatService) {}
 
@@ -46,7 +49,7 @@ export class ChatComponent implements OnInit {
   }
 
   extractUsernameFromToken(): void {
-    const token = localStorage.getItem('access_token');
+    const token = this.storageservice.getItem(STORAGE_KEYS.ACCESS_TOKEN);
     if (token) {
       const decodedToken: any = jwtDecode(token);
       this.userName = decodedToken.username;
