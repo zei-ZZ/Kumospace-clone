@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ChatService } from '../chat.service';
+import { ChatService } from '../../shared/services/chat.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
