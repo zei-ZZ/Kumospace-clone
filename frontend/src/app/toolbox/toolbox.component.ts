@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { STORAGE_KEYS } from '../shared/constants/storage-keys';
 import { StorageService } from '../shared/services/storage.service';
+import { ChatService } from '../shared/services/chat.service';
 
 @Component({
   selector: 'app-toolbox',
@@ -31,12 +32,13 @@ import { StorageService } from '../shared/services/storage.service';
 })
 export class ToolboxComponent {
   isChatOpen: boolean = false;
+  chatservice=inject(ChatService)
 
    router = inject(Router);
    storageservice=inject(StorageService)
  
-  toggleChat() {
-    this.isChatOpen = !this.isChatOpen;
+   toggleChat() {
+    this.chatservice.toggleChat();
   }
   LeaveMeeting(){
 

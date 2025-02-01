@@ -1,4 +1,5 @@
 <div class="layout">
     <app-space></app-space>
     <app-toolbox></app-toolbox>
+    <app-chat *ngIf="(chatOpen$ | async)" [messages]="messages"></app-chat>
 </div>

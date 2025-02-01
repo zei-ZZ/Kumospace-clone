@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, Input, OnInit } from '@angular/core';
 import { ChatService } from '../../shared/services/chat.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,7 @@ import { StorageService } from '../../shared/services/storage.service';
   imports: [FormsModule, CommonModule],
 })
 export class ChatComponent implements OnInit {
-  messages: { message: string; sender: string }[] = [];
+  @Input() messages: { message: string; sender: string }[] = [];
   messageText: string = '';
   spaceKey: string = '';
   route: ActivatedRoute = inject(ActivatedRoute);
@@ -26,14 +26,7 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.spaceKey = this.route.snapshot.paramMap.get('spaceKey')!;
-    this.chatService.joinRoom(this.spaceKey);
     this.extractUsernameFromToken();
-
-    this.chatService
-      .onReceiveMessage()
-      .subscribe((data: { message: string; sender: string }) => {
-        this.messages.push({ message: data.message, sender: data.sender });
-      });
   }
 
   sendMessage(): void {

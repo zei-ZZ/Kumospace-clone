@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environment';
 
 @Injectable({
@@ -8,6 +8,10 @@ import { environment } from '../../../environment';
 })
 export class ChatService {
   private socket: Socket;
+  private chatOpenSubject = new BehaviorSubject<boolean>(false);
+
+  chatOpen$ = this.chatOpenSubject.asObservable(); 
+
 
   constructor() {
     this.socket = io(environment.apiUrl);
@@ -27,10 +31,14 @@ export class ChatService {
         'receiveMessage',
         (data: { message: string; sender: string }) => {
           console.log('Message received:', data); 
-
-          observer.next(data); 
+          this.chatOpenSubject.next(true);
+           observer.next(data); 
         }
       );
     });
+  }
+
+  toggleChat() {
+    this.chatOpenSubject.next(!this.chatOpenSubject.value);
   }
 }
