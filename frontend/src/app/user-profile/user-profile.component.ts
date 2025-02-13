@@ -123,7 +123,7 @@ export class UserProfileComponent {
     });
   }
   logout():void{
-   this.authservice.logout();
-   this.router.navigate(['auth']);
+    this.authservice.logout();
+    this.router.navigate(['auth']);
 }
 }

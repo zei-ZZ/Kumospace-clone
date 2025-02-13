@@ -1,4 +1,4 @@
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, input, Input, OnInit } from '@angular/core';
 import { ChatService } from '../../shared/services/chat.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -14,7 +14,7 @@ import { StorageService } from '../../shared/services/storage.service';
   imports: [FormsModule, CommonModule],
 })
 export class ChatComponent implements OnInit {
-  @Input() messages: { message: string; sender: string }[] = [];
+  messages = input<{ message: string; sender: string }[]>([]);
   messageText: string = '';
   spaceKey: string = '';
   route: ActivatedRoute = inject(ActivatedRoute);
