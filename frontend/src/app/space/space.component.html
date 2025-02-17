@@ -4,18 +4,29 @@
     '-' + viewportPosition().x + 'px -' + viewportPosition().y + 'px'
   "
 >
-  <div class="character" [style.left.px]="char().x" [style.top.px]="char().y">
+  <!-- Local user -->
+  <div 
+    class="character local-character" 
+    [style.left.px]="char().x" 
+    [style.top.px]="char().y"
+  >
     <app-user-avatar
       [stream]="localStream | async"
       [muted]="true"
-      [showProfilePicture]="!videoEnabled()"
     ></app-user-avatar>
   </div>
-  <div>
-    @for (player of remotePlayers(); track player.id) {
-    <div class="character" [style.left.px]="player.x" [style.top.px]="player.y">
-      <app-user-avatar [stream]="null" [muted]="true"></app-user-avatar>
+
+  <!-- Remote users -->
+  @for(stream of remoteStreams$ | async | keyvalue; track stream.key) {
+    <div 
+      class="character remote-character" 
+      [style.left.px]="remotePositions().get(stream.key)?.x ?? 200" 
+      [style.top.px]="remotePositions().get(stream.key)?.y ?? 200"
+    >
+      <app-user-avatar
+        [stream]="stream.value"
+        [muted]="true"
+      ></app-user-avatar>
     </div>
-    }
-  </div>
+  }
 </div>

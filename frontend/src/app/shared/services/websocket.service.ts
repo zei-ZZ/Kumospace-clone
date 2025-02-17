@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { environment } from '../../../environment';
 
@@ -8,6 +8,8 @@ import { environment } from '../../../environment';
 export class WebSocketService {
   private socket!: Socket;
   private isConnected = false;
+
+  remotePositions = signal<Map<string, { x: number; y: number }>>(new Map());
 
   connect() {
     if (!this.socket || !this.isConnected) {
@@ -32,13 +34,24 @@ export class WebSocketService {
       this.socket.on('connect_error', (error) => {
         console.error('WebSocket connection error:', error);
       });
+
+      this.socket.on('playerMoved', (data: { peerId: string; position: { x: number; y: number } }) => {
+        console.log('Received position update:', data);
+        const currentPositions = this.remotePositions();
+        currentPositions.set(data.peerId, data.position);
+        this.remotePositions.set(new Map(currentPositions));
+      });
     }
   }
   
-  sendCoordinates(coordinates: { x: number; y: number }) {
+  sendCoordinates(coordinates: { x: number; y: number }, peerId: string) {
     if (this.isConnected && this.socket) {
-      this.socket.emit('playerMove', coordinates); 
-      console.log(coordinates);
+      const data = {
+        peerId,
+        position: coordinates
+      };
+      this.socket.emit('playerMove', data); 
+      console.log('Sending position update:', data);
     } else {
       console.warn('Socket is not connected. Cannot send coordinates.');
     }

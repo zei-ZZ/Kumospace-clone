@@ -11,10 +11,15 @@
 
 .character {
   position: absolute;
-  /* width: 32px;
-    height: 32px;
-    background-color: red;
-    border-radius: 20%; */
+  transition: all 0.2s ease-out;
+  
+  &.local-character {
+    z-index: 2;
+  }
+  
+  &.remote-character {
+    z-index: 1;
+  }
 }
 
 @media (max-width: 768px) {
