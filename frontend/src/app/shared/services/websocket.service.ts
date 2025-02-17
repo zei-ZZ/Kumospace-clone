@@ -9,6 +9,7 @@ export class WebSocketService {
   private socket!: Socket;
   private isConnected = false;
 
+  // Signal for real-time position updates as a map (key = peerId, value = position)
   remotePositions = signal<Map<string, { x: number; y: number }>>(new Map());
 
   connect() {

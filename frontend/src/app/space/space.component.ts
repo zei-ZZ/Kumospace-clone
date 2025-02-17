@@ -31,6 +31,7 @@ export class SpaceComponent implements OnInit, OnDestroy {
   private webSocketService = inject(WebSocketService);
   private route = inject(ActivatedRoute);
 
+  //Observables are more suited for streams of values over time (like video streams)
   //public peerId$: Observable<string> = new Observable<string>();
  
   private spaceKey!: string | null;
@@ -46,7 +47,10 @@ export class SpaceComponent implements OnInit, OnDestroy {
   doorMap = signal<number[][]>([]);
   private roomsMatrix: string[][] = roomsMap.map;
 
+  //peerId is a single value that, once set, changes very rarely
+  //signal is more suitable and easier to manage
   public peerId$ = signal<string>('');
+
   public remoteStreams$: Observable<{ [peerId: string]: MediaStream }> =
     new Observable<{ [peerId: string]: MediaStream }>();
   public localStream: Observable<MediaStream | null> =
