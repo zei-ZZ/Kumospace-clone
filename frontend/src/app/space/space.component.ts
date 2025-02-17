@@ -11,7 +11,7 @@ import {
 import * as mapData from '../../assets/kumo.json';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Observable } from 'rxjs';
 import { WebrtcService } from '../webrtc/webrtc.service';
 import { ActivatedRoute } from '@angular/router';
 import { TileMapService } from '../shared/services/tile-map.service';
@@ -19,10 +19,6 @@ import * as roomsMap from '../../assets/roomsMatrix.json';
 import Swal from 'sweetalert2';
 import { WebSocketService } from '../shared/services/websocket.service';
 
-interface RemoteUser {
-  stream: MediaStream;
-  position: { x: number; y: number };
-}
 @Component({
   selector: 'app-space',
   imports: [UserAvatarComponent, CommonModule, AsyncPipe],
@@ -39,32 +35,6 @@ export class SpaceComponent implements OnInit, OnDestroy {
  
   private spaceKey!: string | null;
 
-  public peerId$ = signal<string>('');
-  public remoteStreams$: Observable<{ [peerId: string]: MediaStream }> =
-    new Observable<{ [peerId: string]: MediaStream }>();
-  public localStream: Observable<MediaStream | null> =
-    this.webrtcService.getLocalStream();
-
-  remotePositions = computed(() => this.webSocketService.remotePositions());
-
-  ngOnInit(): void {
-    this.loadMaps();
-    this.spaceKey = this.route.snapshot.paramMap.get('spaceKey');
-
-    this.webrtcService.setSpaceKey(String(this.spaceKey));
-    this.webrtcService.initializeSocketAndPeerConnections();
-
-    // Initialize WebSocket connection
-    this.webSocketService.connect();
-
-    // Subscribe to peer ID changes
-    this.webrtcService.peerId$.subscribe((peerId) => {
-      this.peerId$.set(peerId);
-    });
-
-    this.remoteStreams$ = this.webrtcService.getRemoteStreams();
-  }
-
   mapWidth = 1680;
   mapHeight = 1200;
   tileSize = 16;
@@ -75,6 +45,31 @@ export class SpaceComponent implements OnInit, OnDestroy {
   collisionMap = signal<number[][]>([]);
   doorMap = signal<number[][]>([]);
   private roomsMatrix: string[][] = roomsMap.map;
+
+  public peerId$ = signal<string>('');
+  public remoteStreams$: Observable<{ [peerId: string]: MediaStream }> =
+    new Observable<{ [peerId: string]: MediaStream }>();
+  public localStream: Observable<MediaStream | null> =
+    this.webrtcService.getLocalStream();
+
+  remotePositions = computed(() => this.webSocketService.remotePositions());
+
+  ngOnInit(): void {
+    this.loadMaps();
+
+    this.spaceKey = this.route.snapshot.paramMap.get('spaceKey');
+
+    this.webrtcService.setSpaceKey(String(this.spaceKey));
+    this.webrtcService.initializeSocketAndPeerConnections();
+
+    this.webSocketService.connect();
+
+    this.webrtcService.peerId$.subscribe((peerId) => {
+      this.peerId$.set(peerId);
+    });
+
+    this.remoteStreams$ = this.webrtcService.getRemoteStreams();
+  }
 
   loadMaps() {
     this.loadLayer('Collision', this.collisionMap);
@@ -167,7 +162,7 @@ export class SpaceComponent implements OnInit, OnDestroy {
                 ]
               }`
             );
-            // make websoccket call here
+            // make websocket call here
           } else {
             // User canceled: revert to previous position
             this.char.set(previousPosition);

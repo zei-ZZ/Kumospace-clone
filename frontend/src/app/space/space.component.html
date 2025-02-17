@@ -4,7 +4,6 @@
     '-' + viewportPosition().x + 'px -' + viewportPosition().y + 'px'
   "
 >
-  <!-- Local user -->
   <div 
     class="character local-character" 
     [style.left.px]="char().x" 
@@ -16,7 +15,6 @@
     ></app-user-avatar>
   </div>
 
-  <!-- Remote users -->
   @for(stream of remoteStreams$ | async | keyvalue; track stream.key) {
     <div 
       class="character remote-character" 
