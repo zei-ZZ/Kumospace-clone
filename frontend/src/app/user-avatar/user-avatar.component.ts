@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, Input, input } from '@angular/core';
 
 @Component({
   selector: 'app-user-avatar',
@@ -9,4 +9,7 @@ import { Component, input } from '@angular/core';
 export class UserAvatarComponent {
   stream = input<MediaStream | null>(null);
   muted = input<boolean>(false);
+  showProfilePicture = input<boolean>(false);
+
+  profilePicture = '/alex.jpg';
 }

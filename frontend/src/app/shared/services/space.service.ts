@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environment';
 import { SpaceDto } from '../models/space';
@@ -9,9 +9,10 @@ import { SpaceDto } from '../models/space';
   providedIn: 'root'
 })
 export class SpaceService {
+
   private apiUrl = `${environment.apiUrl}/space`;
 
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   createSpace(space: SpaceDto, userId: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}`, { space, userId });

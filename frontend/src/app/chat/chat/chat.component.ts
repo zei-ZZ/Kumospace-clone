@@ -1,7 +1,7 @@
 import { Component, inject, input, Input, OnInit } from '@angular/core';
 import { ChatService } from '../../shared/services/chat.service';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { STORAGE_KEYS } from '../../shared/constants/storage-keys';
@@ -11,18 +11,19 @@ import { StorageService } from '../../shared/services/storage.service';
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule],
 })
 export class ChatComponent implements OnInit {
   messages = input<{ message: string; sender: string }[]>([]);
   messageText: string = '';
   spaceKey: string = '';
-  route: ActivatedRoute = inject(ActivatedRoute);
   initials: string = '';
   userName: string = '';
   storageservice=inject(StorageService)
 
-  constructor(private chatService: ChatService) {}
+  route: ActivatedRoute = inject(ActivatedRoute);
+  
+  private chatService = inject(ChatService);
 
   ngOnInit(): void {
     this.spaceKey = this.route.snapshot.paramMap.get('spaceKey')!;

@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
   WritableSignal,
+  computed,
 } from '@angular/core';
 import * as mapData from '../../assets/kumo.json';
 import { UserAvatarComponent } from '../user-avatar/user-avatar.component';
@@ -16,6 +17,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TileMapService } from '../shared/services/tile-map.service';
 import * as roomsMap from '../../assets/roomsMatrix.json';
 import Swal from 'sweetalert2';
+import { WebSocketService } from '../shared/services/websocket.service';
 
 @Component({
   selector: 'app-space',
@@ -25,26 +27,14 @@ import Swal from 'sweetalert2';
 })
 export class SpaceComponent implements OnInit, OnDestroy {
   private tileMapService = inject(TileMapService);
-
   private webrtcService: WebrtcService = inject(WebrtcService);
+  private webSocketService = inject(WebSocketService);
   private route = inject(ActivatedRoute);
-  public peerId$: Observable<string> = new Observable<string>();
-  public remoteStreams$: Observable<{ [peerId: string]: MediaStream }> =
-    new Observable<{ [peerId: string]: MediaStream }>();
-  public localStream: Observable<MediaStream | null> =
-    this.webrtcService.getLocalStream();
+
+  //Observables are more suited for streams of values over time (like video streams)
+  //public peerId$: Observable<string> = new Observable<string>();
+ 
   private spaceKey!: string | null;
-
-  ngOnInit(): void {
-    this.loadMaps();
-
-    this.spaceKey = this.route.snapshot.paramMap.get('spaceKey');
-
-    this.webrtcService.setSpaceKey(String(this.spaceKey));
-    this.webrtcService.initializeSocketAndPeerConnections();
-    this.peerId$ = this.webrtcService.peerId$;
-    this.remoteStreams$ = this.webrtcService.getRemoteStreams();
-  }
 
   mapWidth = 1680;
   mapHeight = 1200;
@@ -56,6 +46,34 @@ export class SpaceComponent implements OnInit, OnDestroy {
   collisionMap = signal<number[][]>([]);
   doorMap = signal<number[][]>([]);
   private roomsMatrix: string[][] = roomsMap.map;
+
+  //peerId is a single value that, once set, changes very rarely
+  //signal is more suitable and easier to manage
+  public peerId$ = signal<string>('');
+
+  public remoteStreams$: Observable<{ [peerId: string]: MediaStream }> =
+    new Observable<{ [peerId: string]: MediaStream }>();
+  public localStream: Observable<MediaStream | null> =
+    this.webrtcService.getLocalStream();
+
+  remotePositions = computed(() => this.webSocketService.remotePositions());
+
+  ngOnInit(): void {
+    this.loadMaps();
+
+    this.spaceKey = this.route.snapshot.paramMap.get('spaceKey');
+
+    this.webrtcService.setSpaceKey(String(this.spaceKey));
+    this.webrtcService.initializeSocketAndPeerConnections();
+
+    this.webSocketService.connect();
+
+    this.webrtcService.peerId$.subscribe((peerId) => {
+      this.peerId$.set(peerId);
+    });
+
+    this.remoteStreams$ = this.webrtcService.getRemoteStreams();
+  }
 
   loadMaps() {
     this.loadLayer('Collision', this.collisionMap);
@@ -104,6 +122,9 @@ export class SpaceComponent implements OnInit, OnDestroy {
       this.char.set({ x: newX, y: newY });
       this.updateViewport(newX, newY);
 
+      this.webSocketService.sendCoordinates({ x: newX, y: newY },
+        this.peerId$());
+
       if (this.isAtDoor(newX, newY)) {
         // hack :P
         switch (event.key) {
@@ -145,11 +166,12 @@ export class SpaceComponent implements OnInit, OnDestroy {
                 ]
               }`
             );
-            // make websoccket call here
+            // make websocket call here
           } else {
             // User canceled: revert to previous position
             this.char.set(previousPosition);
             this.updateViewport(previousPosition.x, previousPosition.y);
+            this.webSocketService.sendCoordinates(previousPosition, this.peerId$());
           }
         });
       }
@@ -194,5 +216,6 @@ export class SpaceComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.webrtcService.ngOnDestroy();
+    this.webSocketService.disconnect();
   }
 }
