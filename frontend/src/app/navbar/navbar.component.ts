@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 @Component({
   selector: 'app-navbar',
@@ -8,7 +8,9 @@ import { Router } from '@angular/router';
   standalone: true ,
 })
 export class NavbarComponent {
-  constructor(private router: Router) {}
+  
+  router: Router = inject(Router);
+  
   ToAuth(): void {
     this.router.navigate(['/auth']);
   }

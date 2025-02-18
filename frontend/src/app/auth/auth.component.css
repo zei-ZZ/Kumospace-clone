@@ -285,7 +285,7 @@ button{
   -webkit-transition:-webkit-transform 1.2s;
   transition: -webkit-transform 1.2s;
   transition: transform 1.2s;
-  transition: transform 1.2s, -webkit-transform 1.2s;;
+  transition: transform 1.2s, -webkit-transform 1.2s;
 }
 
 .img-btn span.m-in{

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ChatService } from '../chat.service';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+
 import { ActivatedRoute } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 
@@ -9,17 +9,18 @@ import { jwtDecode } from 'jwt-decode';
   selector: 'app-chat',
   templateUrl: './chat.component.html',
   styleUrls: ['./chat.component.css'],
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule],
 })
 export class ChatComponent implements OnInit {
   messages: { message: string; sender: string }[] = [];
   messageText: string = '';
   spaceKey: string = '';
-  route: ActivatedRoute = inject(ActivatedRoute);
   initials: string = '';
   userName: string = '';
 
-  constructor(private chatService: ChatService) {}
+  route: ActivatedRoute = inject(ActivatedRoute);
+  
+  private chatService = inject(ChatService);
 
   ngOnInit(): void {
     this.spaceKey = this.route.snapshot.paramMap.get('spaceKey')!;

@@ -4,6 +4,13 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class TileMapService {
+
+  /**
+   * Convert raw layer data to binary
+   * rawData = Flat array from the layer
+   * result = Binary array (1 for obstacles, 0 for walkable areas/ 1 for doors, 0 for non doors)
+   * Convert non-zero to 1
+   */
   processLayer(rawData: number[]): number[] {
     return rawData.map((tile) => (tile === 0 ? 0 : 1));
   }
