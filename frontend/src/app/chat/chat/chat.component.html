@@ -1,6 +1,6 @@
 <div class="chat-container">
   <div class="messages">
-    <div *ngFor="let msg of messages" class="message">
+    <div *ngFor="let msg of messages()" class="message">
       <div class="avatar">{{ getInitials(msg.sender) }}</div>
       <div class="message-content">
         <small class="username">{{ msg.sender }}</small> 
