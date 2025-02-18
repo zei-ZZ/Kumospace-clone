@@ -10,6 +10,10 @@ import {
 import { ChatComponent } from"../chat/chat/chat.component";
 
 import { VideoAudioStateService } from '../shared/services/video-audio-state.service';
+import { Router } from '@angular/router';
+import { STORAGE_KEYS } from '../shared/constants/storage-keys';
+import { StorageService } from '../shared/services/storage.service';
+import { ChatService } from '../shared/services/chat.service';
 
 @Component({
   selector: 'app-toolbox',
@@ -33,9 +37,21 @@ export class ToolboxComponent {
 
   videoEnabled = this.videoAudioStateService.videoEnabled;
   isChatOpen: boolean = false;
+  chatservice=inject(ChatService)
 
-  toggleChat() {
-    this.isChatOpen = !this.isChatOpen;
+   router = inject(Router);
+   storageservice=inject(StorageService)
+ 
+   toggleChat() {
+    this.chatservice.toggleChat();
+  }
+  LeaveMeeting(){
+
+    const userId = this.storageservice.getItem(STORAGE_KEYS.USER_ID);
+    if(userId){
+      this.router.navigate([`userpage/${userId}`])
+     }
+
   }
 
   toggleVideo() {

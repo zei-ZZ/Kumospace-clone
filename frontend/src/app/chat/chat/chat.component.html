@@ -1,6 +1,6 @@
 <div class="chat-container">
   <div class="messages">
-    @for (msg of messages; track msg) {
+    @for (msg of messages(); track msg) {
       <div class="message">
         <div class="avatar">{{ getInitials(msg.sender) }}</div>
         <div class="message-content">
@@ -15,7 +15,7 @@
     <input
       type="text"
       [(ngModel)]="messageText"
-      placeholder="Écris un message..."
+      placeholder="Write your message..."
       (keyup.enter)="sendMessage()"
       />
       <button (click)="sendMessage()">Send</button>

@@ -1,9 +1,11 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ChatService } from '../chat.service';
+import { Component, inject, input, Input, OnInit } from '@angular/core';
+import { ChatService } from '../../shared/services/chat.service';
 import { FormsModule } from '@angular/forms';
 
 import { ActivatedRoute } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { STORAGE_KEYS } from '../../shared/constants/storage-keys';
+import { StorageService } from '../../shared/services/storage.service';
 
 @Component({
   selector: 'app-chat',
@@ -12,11 +14,12 @@ import { jwtDecode } from 'jwt-decode';
   imports: [FormsModule],
 })
 export class ChatComponent implements OnInit {
-  messages: { message: string; sender: string }[] = [];
+  messages = input<{ message: string; sender: string }[]>([]);
   messageText: string = '';
   spaceKey: string = '';
   initials: string = '';
   userName: string = '';
+  storageservice=inject(StorageService)
 
   route: ActivatedRoute = inject(ActivatedRoute);
   
@@ -24,14 +27,7 @@ export class ChatComponent implements OnInit {
 
   ngOnInit(): void {
     this.spaceKey = this.route.snapshot.paramMap.get('spaceKey')!;
-    this.chatService.joinRoom(this.spaceKey);
     this.extractUsernameFromToken();
-
-    this.chatService
-      .onReceiveMessage()
-      .subscribe((data: { message: string; sender: string }) => {
-        this.messages.push({ message: data.message, sender: data.sender });
-      });
   }
 
   sendMessage(): void {
@@ -47,7 +43,7 @@ export class ChatComponent implements OnInit {
   }
 
   extractUsernameFromToken(): void {
-    const token = localStorage.getItem('access_token');
+    const token = this.storageservice.getItem(STORAGE_KEYS.ACCESS_TOKEN);
     if (token) {
       const decodedToken: any = jwtDecode(token);
       this.userName = decodedToken.username;
